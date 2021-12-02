@@ -24,6 +24,10 @@ staff = "Admin"
 mods = "Mod"
 TIMEOUT_ROLE_NAME = "brig"
 
+SELF_ASSIGN_ROLES = {}
+
+ROLES_CHANNEL_MESSAGE = f"Go ahead and self-assign some roles by clicking the reactions below this message:\n"
+
 JOIN_MESSAGE = f"Welcome to the Star Trek Shitposting Discord!" \
                   f"For protection against bots and spam, you're restricted to only talking in <#{WELCOMECHAN}>." \
                   f"Prove to us you're not an android (Sorry Data) or Exocomp (Fuck you, Peanut Hamper) by saying hi," \
