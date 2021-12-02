@@ -2,6 +2,7 @@ import re
 import asyncio
 import discord
 from discord.ext import commands
+from discord.errors import HTTPException
 
 from utils.config import *
 
@@ -52,7 +53,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         syslog = self.bot.get_channel(SYSLOG)
         await syslog.send(f"{member.mention} joined the server.")
         await channel.send(f"Welcome :wave: to Star Trek Shitposting: The Discord, {member.mention}!  {onjoinmsg}")
-        await channel.send(f"Welcome :wave: to Star Trek Shitposting: The Discord, {member.mention}!  {onjoinmsg}")
+        await member.send(f"Welcome :wave: to Star Trek Shitposting: The Discord, {member.mention}!  {onjoinmsg}")
 
 
     @commands.Cog.listener()
@@ -60,6 +61,24 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         if message.author == self.bot.user:
             return
 
+
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user):
+        if user == self.bot.user: return
+        channel = self.bot.get_channel(ROLE_CHANNEL)
+
+        if hasattr(reaction.emoji, "name"):
+            react = reaction.emoji.name
+        else:
+            react = reaction.emoji
+        role = discord.utils.get(user.guild.roles, name=SELF_ASSIGN_ROLES[react])
+        await user.add_roles(role)
+
+        try:
+            await reaction.message.remove_reaction(react, user)
+        except HTTPException:
+            r = discord.utils.get(channel.guild.emojis, name=react)
+            await reaction.message.remove_reaction(r, user)
 
 
     @commands.Cog.listener()

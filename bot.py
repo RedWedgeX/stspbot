@@ -2,10 +2,11 @@
 
 import discord
 from discord.ext import commands
+from discord.errors import HTTPException, InvalidArgument
 import os
 from os import listdir
 from os.path import isfile, join
-
+from utils.config import ROLE_CHANNEL, ROLES_CHANNEL_MESSAGE, SELF_ASSIGN_ROLES
 
 
 intents = discord.Intents.default()
@@ -13,9 +14,6 @@ intents.all()
 intents.members = True
 
 TOKEN = os.environ['TOKEN']
-
-# FOR LOCAL TESTING
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="cc9-discord-bots-8fd2dc16091f.json"
 
 def get_prefix(bot, message):
     """A callable Prefix for our bot."""
@@ -31,7 +29,7 @@ def get_prefix(bot, message):
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
 
-bot = commands.Bot(command_prefix=get_prefix, description='CactusCon Community Bot.', intents=intents)
+bot = commands.Bot(command_prefix=get_prefix, description='Gronp Bot.', intents=intents)
 
 # Here we load our extensions(cogs) listed above in [initial_extensions].
 if __name__ == '__main__':
@@ -50,8 +48,32 @@ async def on_ready():
 
     print(f'\n\nLogged in as: {bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}\n')
 
+    # Set up the reaction channel
+    channel = bot.get_channel(ROLE_CHANNEL)
+    await channel.purge(limit=10)
+
+    # DELETE AND CREATE ROLE CHANNEL MESSAGE
+    role_list = ""
+
+    for k,v in SELF_ASSIGN_ROLES.items():
+        role = discord.utils.get(channel.guild.emojis, name=k)
+        if role:
+            role_list += f"{role}: {v}\n"
+        else:
+            role_list += f"{k}: {v}\n"
+
+    role_message = f"{ROLES_CHANNEL_MESSAGE}\n{role_list}"
+    msg = await channel.send(role_message)
+
+    for k,v in SELF_ASSIGN_ROLES.items():
+        try:
+            await msg.add_reaction(k)
+        except HTTPException:
+            emoji = discord.utils.get(msg.guild.emojis, name=k)
+            await msg.add_reaction(emoji)
+
     # Changes our bots Playing Status. type=1(streaming) for a standard game you could remove type and url.
-    await bot.change_presence(activity=discord.Streaming(name='Say !help', url='https://cactuscon.com'))
+    await bot.change_presence(activity=discord.Streaming(name='Dom Jot', url='https://www.facebook.com/groups/1477972915840370'))
     print(f'Successfully logged in and booted...!')
 
 

@@ -107,10 +107,13 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
     # WELCOME
     @commands.command()
     @commands.has_any_role(staff, mods)
-    async def w(self, ctx, user: discord.Member):
+    async def w(self, ctx, user: discord.Member=None):
         """ - Welcomes a user to the server and removes recruit role"""
         wchan = self.bot.get_channel(WELCOMECHAN)
-        print(user)
+        if ctx.channel == wchan:
+            if not user:
+                async for message in ctx.history(limit=2):
+                    user = message.author
         if ctx.channel == wchan:
             role = discord.utils.get(ctx.guild.roles, name=restricted)
             await user.remove_roles(role)
