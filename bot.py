@@ -6,8 +6,6 @@ import os
 from os import listdir
 from os.path import isfile, join
 
-import asyncpg
-from utils.util import get_secret
 
 
 intents = discord.Intents.default()
