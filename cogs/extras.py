@@ -11,7 +11,7 @@ class Extras(commands.Cog, name="Stuff for funzies"):
     @commands.command(hidden=True)
     @commands.has_any_role(staff)
     async def script(self, ctx, movie):
-        while true:
+        while True:
             try:
                 chanid=  918285694122721351
                 chan = self.bot.get_channel(int(chanid))
