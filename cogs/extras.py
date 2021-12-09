@@ -13,6 +13,8 @@ class Extras(commands.Cog, name="Stuff for funzies"):
     async def script(self, ctx, movie):
         while True:
             try:
+                await ctx.voice_client.disconnect()
+
                 chanid=  918285694122721351
                 chan = self.bot.get_channel(int(chanid))
                 await ctx.send(f"connecting to {chan.name}")
