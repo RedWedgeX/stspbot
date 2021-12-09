@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils.config import *
+
 from utils import helpers
 
 

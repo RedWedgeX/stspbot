@@ -12,6 +12,7 @@ def groups(seq, length):
     for i in range(0, len(seq), length):
         yield seq[i:i + length]
 
+
 def remove_non_ascii(s):
     """Remove non-ASCII characters from a Unicode string. Removes @ (at symbol, decimal
     64) which pings discord users/roles. Also removes ` (grave accent, decimal 96) which
@@ -20,7 +21,9 @@ def remove_non_ascii(s):
     """
     return str("".join(i for i in s if ord(i) < 128 and ord(i) != 96 and ord(i) != 64))
 
+
 def date(target, clock=True):
     if clock is False:
         return target.strftime("%d %B %Y")
     return target.strftime("%d %B %Y, %H:%M")
+

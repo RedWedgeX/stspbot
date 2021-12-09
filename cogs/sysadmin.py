@@ -1,6 +1,6 @@
 from discord.ext import commands, tasks
+
 from utils.config import staff
-import requests
 
 SUCCESS = '**`SUCCESS`**'
 ERROR = '**`ERROR`**'
@@ -17,7 +17,7 @@ class SysAdmin(commands.Cog, name="Bot admin commands"):
     @tasks.loop(minutes=2)
     async def healthcheck(self):
         "foo"
-        #requests.get("https://heartbeat.vuln.pw/ping/c6743519-5147-496e-91d9-eb68eece0bdd")
+        # requests.get("https://heartbeat.vuln.pw/ping/c6743519-5147-496e-91d9-eb68eece0bdd")
 
     # Hidden means it won't show up on the default help.
     @commands.command(name='load', hidden=True)
@@ -64,6 +64,7 @@ class SysAdmin(commands.Cog, name="Bot admin commands"):
     @commands.has_any_role(staff)
     async def error(self, ctx):
         raise ValueError('An error has been manually triggered for testing purposes.')
+
 
 def setup(client):
     client.add_cog(SysAdmin(client))

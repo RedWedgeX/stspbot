@@ -1,19 +1,20 @@
-import re
 import asyncio
+import re
+
 import discord
-from discord.ext import commands
 from discord.errors import HTTPException
+from discord.ext import commands
 
 from utils.config import *
 
 # -------URL Match anti-spam prevention --
-urlMatchedUsers = [] # stores by snowflake ID
+urlMatchedUsers = []  # stores by snowflake ID
 # -------URL Regex pattern syntax---------
 urlRegex = r"(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+" \
            r"([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$"
 
 urlPattern = re.compile(urlRegex, flags=re.MULTILINE | re.IGNORECASE |
-                        re.DOTALL  )
+                                        re.DOTALL)
 
 
 class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
@@ -35,12 +36,11 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             await channel.send(urlMatchMsg.format(userid))
             await asyncio.sleep(10.0)
 
-# LOG DEPARTS
+    # LOG DEPARTS
     @commands.Cog.listener()
     async def on_member_remove(self, user):
         syslog = self.bot.get_channel(SYSLOG)
         await syslog.send(f"<@{user.id}> `(<@{user.id}> {user.display_name})` has left the server.")
-
 
     # NEW USER PROCESSING
     @commands.Cog.listener()
@@ -55,16 +55,15 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         await channel.send(f"Welcome :wave: to Star Trek Shitposting: The Discord, {member.mention}!  {onjoinmsg}")
         await member.send(f"Welcome :wave: to Star Trek Shitposting: The Discord, {member.mention}!  {onjoinmsg}")
 
-
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.author == self.bot.user:
             return
 
-
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         if user == self.bot.user: return
+        if reaction.message.channel.id != ROLE_CHANNEL: return
         channel = self.bot.get_channel(ROLE_CHANNEL)
 
         if hasattr(reaction.emoji, "name"):
@@ -79,7 +78,6 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         except HTTPException:
             r = discord.utils.get(channel.guild.emojis, name=react)
             await reaction.message.remove_reaction(r, user)
-
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):

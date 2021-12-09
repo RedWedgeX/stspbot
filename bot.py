@@ -1,19 +1,21 @@
 #!/usr/bin/python3
 
-import discord
-from discord.ext import commands
-from discord.errors import HTTPException, InvalidArgument
 import os
 from os import listdir
 from os.path import isfile, join
-from utils.config import ROLE_CHANNEL, ROLES_CHANNEL_MESSAGE, SELF_ASSIGN_ROLES
 
+import discord
+from discord.errors import HTTPException
+from discord.ext import commands
+
+from utils.config import ROLE_CHANNEL, ROLES_CHANNEL_MESSAGE, SELF_ASSIGN_ROLES
 
 intents = discord.Intents.default()
 intents.all()
 intents.members = True
 
 TOKEN = os.environ['TOKEN']
+
 
 def get_prefix(bot, message):
     """A callable Prefix for our bot."""
@@ -42,6 +44,7 @@ if __name__ == '__main__':
         except Exception as e:
             print(f'Failed to load extension {extension}: {e}.')
 
+
 @bot.event
 async def on_ready():
     """http://discordpy.readthedocs.io/en/rewrite/api.html#discord.on_ready"""
@@ -55,25 +58,27 @@ async def on_ready():
     # DELETE AND CREATE ROLE CHANNEL MESSAGE
     role_list = ""
 
-    for k,v in SELF_ASSIGN_ROLES.items():
+    for k, v in SELF_ASSIGN_ROLES.items():
         role = discord.utils.get(channel.guild.emojis, name=k)
         if role:
             role_list += f"{role}: {v}\n"
         else:
             role_list += f"{k}: {v}\n"
 
-    role_message = f"{ROLES_CHANNEL_MESSAGE}\n{role_list}"
+    role_message = f"{ROLES_CHANNEL_MESSAGE}\n{role_list}\n---------"
     msg = await channel.send(role_message)
 
-    for k,v in SELF_ASSIGN_ROLES.items():
+    for k, v in SELF_ASSIGN_ROLES.items():
         try:
             await msg.add_reaction(k)
         except HTTPException:
             emoji = discord.utils.get(msg.guild.emojis, name=k)
             await msg.add_reaction(emoji)
+    # await msg.add_reaction("🔴") TODO - activate this for remove-roles functionality
 
     # Changes our bots Playing Status. type=1(streaming) for a standard game you could remove type and url.
-    await bot.change_presence(activity=discord.Streaming(name='Dom Jot', url='https://www.facebook.com/groups/1477972915840370'))
+    await bot.change_presence(
+        activity=discord.Streaming(name='Dom Jot', url='https://www.facebook.com/groups/1477972915840370'))
     print(f'Successfully logged in and booted...!')
 
 

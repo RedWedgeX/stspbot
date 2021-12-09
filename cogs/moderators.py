@@ -1,13 +1,12 @@
 # Standard library imports
 import secrets
-from random import choice
 import traceback
-import asyncio
-import pytz
-import aiosqlite
 from datetime import datetime
+import time
+import aiosqlite
 # Library imports
 import discord
+import pytz
 from discord.ext import commands
 
 # Local imports
@@ -43,18 +42,17 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
                            f"{ctx.message.channel.mention}.\nReason: {reason}")
         await ctx.send(f"Hey {user.mention}, you need to chill out a bit. You've been given the `{role}` role."
                        f" This means you're stuck in "
-                       f"{ self.bot.get_channel(TIMEOUTCHAN).mention} for 30 minutes."
+                       f"{self.bot.get_channel(TIMEOUTCHAN).mention} for {TIMEOUT_MINUTES} minutes."
                        f" Be cool...\nReason: {reason}"
                        )
 
         # Add the action to the database
         async with aiosqlite.connect(DB_PATH) as db:
-            sqlstring = "INSERT INTO naughtylist (discord_id, type, time, reason, by, active) " \
-                        f"VALUES ({user.id}, '{NAUGHTY_TIMEOUT}', CURRENT_TIMESTAMP, '{reason}', {ctx.message.author.id}, {True})"
-
-            await db.execute(sqlstring)
+            # TIMESTAMP = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+            timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+            sqlquery = """INSERT INTO naughtylist(discord_id, type, time, reason, by, active) VALUES (?,?,?,?,?, True)"""
+            await db.execute(sqlquery, (user.id, NAUGHTY_TIMEOUT, timestamp, reason, ctx.message.author.id))
             await db.commit()
-
 
     # UNCHILL
     @commands.command()
@@ -70,12 +68,9 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
             await db.execute(f"UPDATE naughtylist SET active = 0 WHERE discord_id = {user.id}")
             await db.commit()
 
-
-
         time_out_channel = self.bot.get_channel(TIMEOUTCHAN)
         await channel.send(f"{user.mention}'s `{role}` role REMOVED by {ctx.message.author.mention}.")
         await time_out_channel.send(f"Hey {user.mention}, `{role}` role removed. welcome back! Be cool...")
-
 
     # BAN
     @commands.command()
@@ -90,7 +85,7 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
             why = remove_non_ascii(why)
         if user.top_role == new_member or \
                 discord.utils.get(ctx.message.author.roles, name=staff) is not None or \
-            discord.utils.get(ctx.message.author.roles, name=mods) is not None:
+                discord.utils.get(ctx.message.author.roles, name=mods) is not None:
 
             try:
                 await user.ban(reason=why, delete_message_days=0)
@@ -103,11 +98,10 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
                 await ctx.message.delete()
                 await ctx.send(f"<@{user.id}>  BANNED. Reason: {why}")
 
-
     # WELCOME
     @commands.command()
     @commands.has_any_role(staff, mods)
-    async def w(self, ctx, user: discord.Member=None):
+    async def w(self, ctx, user: discord.Member = None):
         """ - Welcomes a user to the server and removes recruit role"""
         wchan = self.bot.get_channel(WELCOMECHAN)
         if ctx.channel == wchan:
@@ -121,10 +115,9 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
 
             await syslog.send(f"{user.mention} welcomed to the server by {ctx.message.author.mention}")
             message = ("Thanks for introducing yourself. You now have full member access to our "
-                       f"channels")
+                       f"channels. Stop by <#{ROLE_CHANNEL}> and self-assign some permissions!")
             await ctx.send(f"{user.mention}, {message}")
             await ctx.message.delete()
-
 
     # NICKFIX
     @commands.command()
@@ -175,12 +168,12 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
 
         # Add the action to the database
         async with aiosqlite.connect(DB_PATH) as db:
-            sqlquery = f"INSERT INTO naughtylist(discord_id, type, time, reason, by, active) " \
-                       f"VALUES ({user.id}, '{NAUGHTY_WARN}', CURRENT_TIMESTAMP, '{reason}', {ctx.message.author.id}, 0)"
-            await db.execute(sqlquery)
+            TIMESTAMP = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+            sqlquery = """INSERT INTO naughtylist(discord_id, type, time, reason, by, active) VALUES (?,?,?,?,?, 0)"""
+            await db.execute(sqlquery, (user.id, NAUGHTY_WARN, TIMESTAMP, reason, ctx.message.author.id))
+
 
             await db.commit()
-
 
     # USER
     @commands.command(name='user_info', aliases=['user', 'info', 'userinfo', 'luser'])
@@ -194,28 +187,28 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
         timeout_count = 0
 
         async with aiosqlite.connect(DB_PATH) as db:
-                results = await db.execute_fetchall(f"SELECT * FROM naughtylist WHERE discord_id = {int(user.id)}")
-                print(results)
-                for record in results:
-                    print(record)
-                    type = record[2]
-                    time = datetime.strptime(record[3], "%Y-%m-%d %H:%M:%S")
-                    time = time.astimezone(az_timezone)
-                    local_time = time.strftime("%m/%d %H:%M:%S")
-                    reason = record[4]
-                    active = record[6]
-                    submitted_by = await self.bot.fetch_user(int(record[5]))
-                    if active:
-                        a = ":bangbang:"
-                    else:
-                        a = ""
-                    if type == NAUGHTY_TIMEOUT:
-                        timeouts += f"{local_time} by {submitted_by} `{reason}`{a}\n"
-                        timeout_count += 1
-                    elif type == NAUGHTY_WARN:
-                        warns += f"{local_time} by {submitted_by} `{reason}`\n"
-                        warn_count += 1
-                    print(record[1])
+            results = await db.execute_fetchall(f"SELECT * FROM naughtylist WHERE discord_id = {int(user.id)}")
+            print(results)
+            for record in results:
+                print(record)
+                type = record[2]
+                time = datetime.strptime(record[3], "%Y-%m-%d %H:%M:%S")
+                time = time.astimezone(az_timezone)
+                local_time = time.strftime("%m/%d %H:%M:%S")
+                reason = record[4]
+                active = record[6]
+                submitted_by = await self.bot.fetch_user(int(record[5]))
+                if active:
+                    a = ":bangbang:"
+                else:
+                    a = ""
+                if type == NAUGHTY_TIMEOUT:
+                    timeouts += f"{local_time} by {submitted_by} `{reason}`{a}\n"
+                    timeout_count += 1
+                elif type == NAUGHTY_WARN:
+                    warns += f"{local_time} by {submitted_by} `{reason}`\n"
+                    warn_count += 1
+                print(record[1])
 
         if warns == "":
             warns = "None"
@@ -228,7 +221,6 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
         embed.add_field(name=f"Time Outs: **{timeout_count}**", value=timeouts, inline=False)
         embed.set_footer(text="!! indicates active timeout")
         await ctx.send(content=f"ℹ information about **{user.name}**", embed=embed)
-
 
     # PURGE
     @commands.command()
@@ -276,8 +268,6 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
             await ctx.message.delete()  # delete the purge command message
         except discord.errors.NotFound:  # happens when a moderator purges themself
             pass
-
-
 
     # ROLELIST
     @commands.command()

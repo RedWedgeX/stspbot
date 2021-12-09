@@ -1,9 +1,11 @@
+import asyncio
+from datetime import datetime
+
+import aiosqlite
 import discord
 from discord.ext import tasks, commands
+
 from utils.config import *
-import asyncio
-import aiosqlite
-from datetime import datetime
 
 
 class Tasks(commands.Cog, name="Automatic Tasks"):
@@ -18,9 +20,8 @@ class Tasks(commands.Cog, name="Automatic Tasks"):
     async def check_timeouts(self):
         print("Checking timeouts")
         modlog_channel = self.bot.get_channel(SYSLOG)
-        role = discord.utils.get(modlog_channel.guild.roles, name=restricted)
+        role = discord.utils.get(modlog_channel.guild.roles, name=TIMEOUT_ROLE_NAME)
         timeout_channel = self.bot.get_channel(TIMEOUTCHAN)
-
 
         async with aiosqlite.connect(DB_PATH) as db:
             sqlstring = "SELECT * FROM naughtylist WHERE active = 1"
