@@ -113,7 +113,7 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
             await user.remove_roles(role)
             syslog = self.bot.get_channel(SYSLOG)
 
-            await syslog.send(f"{user.mention} welcomed to the server by {ctx.message.author.mention}")
+            await syslog.send(f"{user.mention} welcomed to the server by `{ctx.message.author.display_name}`")
             message = ("Thanks for introducing yourself. You now have full member access to our "
                        f"channels. Stop by <#{ROLE_CHANNEL}> and self-assign some permissions!")
             await ctx.send(f"{user.mention}, {message}")
