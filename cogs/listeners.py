@@ -71,7 +71,8 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             await message.channel.send(f"{message.author.mention} - NO RUNNING ON THE PROMENADE. ***humph***")
                       
         if "even the" in message.content.lower():
-            m = message.content.split(("even the ").lower(),1)
+            m = message.content.lower()
+            m = m.split("even the ",1)
             m = ' '.join(m)
             m = re.sub(r'[^\w\s]', '', m)
             await message.channel.send(f"{message.author.mention} - ESPECIALLY the {m}!")
