@@ -69,6 +69,9 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                       
         if " run" in message.content.lower():
             await message.channel.send(f"{message.author.mention} - NO RUNNING ON THE PROMENADE. ***humph***")
+
+        if "group" in message.context.lower():
+            await message.channel.send(f"*gronp")
                       
         if "even the" in message.content.lower():
             m = message.content.lower()
