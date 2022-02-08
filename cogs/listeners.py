@@ -69,6 +69,13 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                       
         if " run" in message.content.lower():
             await message.channel.send(f"{message.author.mention} - NO RUNNING ON THE PROMENADE. ***humph***")
+                      
+        if "even the" in message.content.lower()
+            m = message.content.split("even the ",1)
+            m = ' '.join(m)
+            m = re.sub(r'[^\w\s]', '', m)
+            await message.channel.send(f"{message.author.mention} - ESPECIALLY the {m}!)
+
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         if user == self.bot.user: return
