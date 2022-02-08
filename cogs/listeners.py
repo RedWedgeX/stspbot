@@ -75,10 +75,10 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             m = m.split("even the ",1)
             m = ' '.join(m)
             m = re.sub(r'[^\w\s]', '', m)
-            await message.channel.send(f"{message.author.mention} - ESPECIALLY the {m}!")
+            await message.channel.send(f"{message.author.mention} - ESPECIALLY the{m}!")
 
         if "end program" in message.content.lower():
-            m = await message.channel.send(f"{message.author.mention}: Standby. Attempting to end program")
+            m = await message.channel.send(f"{message.author.mention}: Standby. Attempting to end program.")
             async with message.channel.typing():
                 await asyncio.sleep(6)
                 i = randrange(9)
