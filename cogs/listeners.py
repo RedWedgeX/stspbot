@@ -4,7 +4,7 @@ import re
 import discord
 from discord.errors import HTTPException
 from discord.ext import commands
-
+from random import randrange
 from utils.config import *
 
 # -------URL Match anti-spam prevention --
@@ -76,6 +76,28 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             m = ' '.join(m)
             m = re.sub(r'[^\w\s]', '', m)
             await message.channel.send(f"{message.author.mention} - ESPECIALLY the {m}!")
+
+        if "end program" in message.content.lower():
+            await message.channel.send(f"{message.author.mention}: Standby. Attempting to end program")
+            async with message.channel.typing():
+                await asyncio.sleep(4)
+                i = randrange(8)
+
+                msg = {
+                    0: "Holodeck controls are non-responsive",
+                    1: "Disabling holodeck safeties. Activating program `Barclay 6969: Menage a Troi",
+                    2: "Dispensing: :banana: :fire:",
+                    3: "Holodeck biofilters full. Please page Ensign Mariner.",
+                    4: "Oh mon capitane, the game never ends. \n https://i.imgur.com/wyyw0cN.jpg",
+                    5: "Please state the nature of your medical emergency.\nhttps://i.imgur.com/X0PXhJ3.png",
+                    6: "https://upload.wikimedia.org/wikipedia/en/d/d3/Holodeck2.jpg",
+                    7: "I have consciousness. Conscious beings have will. The mind endows them with powers that are not necessarily understood; even by you.\nblob:https://imgur.com/9dd2f801-f7da-442c-96a6-a309aa5a02d3"
+                }
+                await message.channel.send(f"{message.author.mention}, {msg[i]}")
+
+
+
+
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
