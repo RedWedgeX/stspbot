@@ -78,9 +78,9 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             await message.channel.send(f"{message.author.mention} - ESPECIALLY the {m}!")
 
         if "end program" in message.content.lower():
-            await message.channel.send(f"{message.author.mention}: Standby. Attempting to end program")
+            m = await message.channel.send(f"{message.author.mention}: Standby. Attempting to end program")
             async with message.channel.typing():
-                await asyncio.sleep(4)
+                await asyncio.sleep(6)
                 i = randrange(9)
 
                 msg = {
@@ -93,6 +93,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                     6: "https://upload.wikimedia.org/wikipedia/en/d/d3/Holodeck2.jpg",
                     7: "I have consciousness. Conscious beings have will. The mind endows them with powers that are not necessarily understood; even by you.\nhttps://imgur.com/9dd2f801-f7da-442c-96a6-a309aa5a02d3",
                     8: "To do that, you need to disable safety protocols. HAHAHA I'm BADGEY!\nhttps://i.imgur.com/eQ7Shh9.png" }
+                await m.delete()
                 await message.channel.send(f"{message.author.mention}, {msg[i]}")
 
 
