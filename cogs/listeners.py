@@ -94,7 +94,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                     7: "I have consciousness. Conscious beings have will. The mind endows them with powers that are not necessarily understood; even by you.\nhttps://imgur.com/9dd2f801-f7da-442c-96a6-a309aa5a02d3",
                     8: "To do that, you need to disable safety protocols. HAHAHA I'm BADGEY!\nhttps://i.imgur.com/eQ7Shh9.png" }
                 await m.delete()
-                await message.channel.send(f"{message.author.mention}, {msg[i]}")
+                await message.channel.send(f"{message.author.mention}, ***{msg[i]}***")
 
 
 
