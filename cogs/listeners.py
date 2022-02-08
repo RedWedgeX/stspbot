@@ -81,7 +81,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             await message.channel.send(f"{message.author.mention}: Standby. Attempting to end program")
             async with message.channel.typing():
                 await asyncio.sleep(4)
-                i = randrange(8)
+                i = randrange(9)
 
                 msg = {
                     0: "Holodeck controls are non-responsive",
@@ -92,7 +92,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                     5: "Please state the nature of your medical emergency.\nhttps://i.imgur.com/X0PXhJ3.png",
                     6: "https://upload.wikimedia.org/wikipedia/en/d/d3/Holodeck2.jpg",
                     7: "I have consciousness. Conscious beings have will. The mind endows them with powers that are not necessarily understood; even by you.\nblob:https://imgur.com/9dd2f801-f7da-442c-96a6-a309aa5a02d3"
-                }
+                    8: "To do that, you need to disable safety protocols. HAHAHA I'm BADGEY!\nhttps://i.imgur.com/eQ7Shh9.png" }
                 await message.channel.send(f"{message.author.mention}, {msg[i]}")
 
 
