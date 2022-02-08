@@ -65,8 +65,10 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                                        f"EMMY AWARD WINNING Episode Threshold` wrong")
 
         if "tuvix" in message.content.lower():
-            await message.channel.send(f"{message.author.mention} - JANEWAY DID NOTHING WRONG")
-
+            await message.channel.send(f"{message.author.mention} - JANEWAY WAS RIGHT.")
+                      
+        if "run" in message.content.lower():
+            await message.channel.send(f"{message.author.mention} - NO RUNNING ON THE PROMENADE. **humph**")
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         if user == self.bot.user: return
