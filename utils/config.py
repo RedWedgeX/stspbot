@@ -29,7 +29,14 @@ TIMEOUT_ROLE_NAME = "brig"
 # For stock emojis, use the emoji. For custom ones, use the name
 SELF_ASSIGN_ROLES = {"horgahn": "Horga'hn",
                      "masterchief": "Halo Player",
-                     "⛔": "Spoilers"}
+                     "⛔": "Spoilers",
+                    "any":"Any Pronouns",
+                    "sheher":"She/Her",
+                    "hehim":"He/Him",
+                    "shethem":"She/Them",
+                    "hethem":"He/Them",
+                    "theythem":"They/Them",
+                    "askme":"Ask me my pronouns"}
 
 ROLES_CHANNEL_MESSAGE = f"Go ahead and self-assign some roles by clicking the reactions below this message:\n" \
                         f"(`Horga'hn` gives you access to NSFW channels, for example)\n\n "
