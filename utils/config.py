@@ -28,6 +28,7 @@ TIMEOUT_ROLE_NAME = "brig"
 
 # For stock emojis, use the emoji. For custom ones, use the name
 SELF_ASSIGN_ROLES = {"horgahn": "Horga'hn",
+                     "masterchief": "halo player",
                      "⛔": "Spoilers"}
 
 ROLES_CHANNEL_MESSAGE = f"Go ahead and self-assign some roles by clicking the reactions below this message:\n" \
