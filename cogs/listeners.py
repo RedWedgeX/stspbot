@@ -95,7 +95,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                     4: "Oh mon capitane, the simulation never ends. \n https://i.imgur.com/wyyw0cN.jpg",
                     5: "Please state the nature of your medical emergency.\nhttps://i.imgur.com/X0PXhJ3.png",
                     6: "Program terminated.\nhttps://i.imgur.com/lUzXObO.jpg",
-                    7: "I have consciousness. Conscious beings have will. The mind endows them with powers that are not necessarily understood; even by you.\nhttps://imgur.com/9dd2f801-f7da-442c-96a6-a309aa5a02d3",
+                    7: "I have consciousness. Conscious beings have will. The mind endows them with powers that are not necessarily understood; even by you.\nhttps://i.imgur.com/iW5m1DB.png",
                     8: "To do that, you need to disable safety protocols. HAHAHA I'm BADGEY!\nhttps://i.imgur.com/eQ7Shh9.png",
                     9: "INITIATING STSP DISCORD SERVER SELF DESTRUCT\nhttps://media4.giphy.com/media/3ov9k9Ss9N3wO6FQ7C/giphy.gif"}
 
