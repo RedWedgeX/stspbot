@@ -67,7 +67,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         if "tuvix" in message.content.lower():
             await message.channel.send(f"{message.author.mention} - JANEWAY WAS RIGHT.")
                       
-        if " run" in message.content.lower():
+        if re.match("(?:^|[^a-zA-Z])(run|running|runs|ran)(?:[^a-zA-Z]|$)", message.content.lower()):
             await message.channel.send(f"{message.author.mention} - NO RUNNING ON THE PROMENADE. ***humph***")
 
         if "group" in message.content.lower():
