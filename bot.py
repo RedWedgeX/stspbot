@@ -51,10 +51,6 @@ async def on_ready():
 
     print(f'\n\nLogged in as: {bot.user.name} - {bot.user.id}\nVersion: {discord.__version__}\n')
 
-    # Set up the reaction channel
-    channel = bot.get_channel(ROLE_CHANNEL)
-    await channel.purge(limit=10)
-
     # Changes our bots Playing Status. type=1(streaming) for a standard game you could remove type and url.
     await bot.change_presence(
         activity=discord.Streaming(name='Dom Jot', url='https://www.facebook.com/groups/1477972915840370'))
