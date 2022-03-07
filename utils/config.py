@@ -28,8 +28,9 @@ TIMEOUT_ROLE_NAME = "brig"
 
 # For stock emojis, use the emoji. For custom ones, use the name
 SELF_ASSIGN_ROLES = {"horgahn": "Horga'hn",
-                     "masterchief": "Halo Player",
-                     "⛔": "Spoilers",
+                    "⛔": "Spoilers",
+                    "sto": "STO Player",
+                    "masterchief": "Halo Player",
                     "any":"Any Pronouns",
                     "sheher":"She/Her",
                     "hehim":"He/Him",
