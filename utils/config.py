@@ -26,6 +26,8 @@ staff = "Admin"
 mods = "Mod"
 TIMEOUT_ROLE_NAME = "brig"
 
+EXCLUDE_FROM_BADGEY_RESPONSE = [946272022852419615, 954583313845219348]
+
 # For stock emojis, use the emoji. For custom ones, use the name
 SELF_ASSIGN_ROLES = {"horgahn": "Horga'hn",
                     "⛔": "Spoilers",
@@ -42,9 +44,8 @@ SELF_ASSIGN_ROLES = {"horgahn": "Horga'hn",
 ROLES_CHANNEL_MESSAGE = f"Go ahead and self-assign some roles by clicking the reactions below this message:\n" \
                         f"(`Horga'hn` gives you access to NSFW channels, for example)\n\n "
 
-JOIN_MESSAGE = f"Welcome to the Star Trek Shitposting Discord! " \
-               f"For protection against bots and spam, you're restricted to only talking in <#{WELCOMECHAN}>. " \
-               f"Prove to us you're not an android (Sorry Data) or Exocomp (Fuck you, Peanut Hamper) by saying hi," \
+JOIN_MESSAGE = f"For protection against bots and spam, you're restricted to only talking in <#{WELCOMECHAN}>. " \
+               f"Prove to us you're not an android (**Sorry Commander Data**) or Exocomp (**Fuck you, Peanut Hamper**) by saying hi," \
                f" introducing yourself, or telling us your least favorite Trek character, and our mods will " \
                f"let you in!"
 

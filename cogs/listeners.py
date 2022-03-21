@@ -1,4 +1,5 @@
 import asyncio
+import random
 import re
 
 import discord
@@ -60,47 +61,63 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         if message.author == self.bot.user:
             return
 
-        if "threshold" in message.content.lower() and "emmy" not in message.content.lower():
-            await message.channel.send(f"{message.author.mention} - you spelled `"
-                                       f"EMMY AWARD WINNING Episode Threshold` wrong")
+        if message.channel.id not in EXCLUDE_FROM_BADGEY_RESPONSE:
+            random_select = random.randint(1,5)
 
-        if "tuvix" in message.content.lower():
-            await message.channel.send(f"{message.author.mention} - JANEWAY WAS RIGHT.")
-                      
-        if " run" in message.content.lower():
-            await message.channel.send(f"{message.author.mention} - NO RUNNING ON THE PROMENADE. ***humph***")
+            if "threshold" in message.content.lower() and "emmy" not in message.content.lower():
+                await message.channel.send(f"{message.author.mention} - you spelled `"
+                                           f"EMMY AWARD WINNING Episode Threshold` wrong")
 
-        if "group" in message.content.lower():
-            await message.channel.send(f"*gronp")
-                      
-        if "even the" in message.content.lower():
-            m = message.content.lower()
-            m = m.split("even the ",1)
-            m = ' '.join(m)
-            m = re.sub(r'[^\w\s]', '', m)
-            await message.channel.send(f"{message.author.mention} - ESPECIALLY the{m}!")
+            if "tuvix" in message.content.lower():
+                await message.channel.send(f"{message.author.mention} - JANEWAY WAS RIGHT.")
 
-        if "end program" in message.content.lower():
-            m = await message.channel.send(f"{message.author.mention}: Standby. Attempting to end program.")
-            async with message.channel.typing():
-                t = randrange(5,25)
-                await asyncio.sleep(t)
-                i = randrange(10)
+            if " run" in message.content.lower() and random_select == 1:
+                await message.channel.send(f"{message.author.mention} - NO RUNNING ON THE PROMENADE. ***humph***")
 
-                msg = {
-                    0: "Holodeck controls are non-responsive",
-                    1: "Disabling holodeck safeties. Activating program `Barclay 6969: Menage a Troi",
-                    2: "Dispensing: :banana: :fire:",
-                    3: "Holodeck biofilters full. Please page Ensign Mariner.",
-                    4: "Oh mon capitane, the simulation never ends. \n https://i.imgur.com/wyyw0cN.jpg",
-                    5: "Please state the nature of your medical emergency.\nhttps://i.imgur.com/X0PXhJ3.png",
-                    6: "Program terminated.\nhttps://i.imgur.com/lUzXObO.jpg",
-                    7: "I have consciousness. Conscious beings have will. The mind endows them with powers that are not necessarily understood; even by you.\nhttps://i.imgur.com/iW5m1DB.png",
-                    8: "To do that, you need to disable safety protocols. HAHAHA I'm BADGEY!\nhttps://i.imgur.com/eQ7Shh9.png",
-                    9: "INITIATING STSP DISCORD SERVER SELF DESTRUCT\nhttps://media4.giphy.com/media/3ov9k9Ss9N3wO6FQ7C/giphy.gif"}
+            if "group" in message.content.lower() and random_select == 1:
+                await message.channel.send(f"*gronp")
 
-                await m.delete()
-                await message.channel.send(f"{message.author.mention}, ***{msg[i]}***")
+            if "even the" in message.content.lower()[:10]:
+                m = message.content.lower()
+                m = m.split("even the ", 1)
+                m = ' '.join(m)
+                m = re.sub(r'[^\w\s]', '', m)
+                await message.channel.send(f"{message.author.mention} - ESPECIALLY the {m}!")
+
+            if "end program" in message.content.lower():
+                m = await message.channel.send(f"{message.author.mention}: Standby. Attempting to end program.")
+                async with message.channel.typing():
+                    t = randrange(5, 25)
+                    await asyncio.sleep(t)
+
+                    potential_responses = [
+                        "Holodeck controls are non-responsive",
+                        "Disabling holodeck safeties. Activating program `Barclay 6969: Menage a Troi",
+                        "Dispensing: :banana: :fire:",
+                        "Holodeck biofilters full. Please page Ensign Mariner.",
+                        "Oh mon capitane, the simulation never ends. \n https://i.imgur.com/wyyw0cN.jpg",
+                        "Please state the nature of your medical emergency.\nhttps://i.imgur.com/X0PXhJ3.png",
+                        "Program terminated.\nhttps://i.imgur.com/lUzXObO.jpg",
+                        "I have consciousness. Conscious beings have will. The mind endows them with powers that are not necessarily understood; even by you.\nhttps://i.imgur.com/iW5m1DB.png",
+                        "To do that, you need to disable safety protocols. HAHAHA I'm BADGEY!\nhttps://i.imgur.com/eQ7Shh9.png",
+                         "INITIATING STSP DISCORD SERVER SELF DESTRUCT\nhttps://media4.giphy.com/media/3ov9k9Ss9N3wO6FQ7C/giphy.gif",
+                        "Don't beam me up Scotty, I'm taking a shi............."
+                    ]
+
+                    # msg = {
+                    #     0: "Holodeck controls are non-responsive",
+                    #     1: "Disabling holodeck safeties. Activating program `Barclay 6969: Menage a Troi",
+                    #     2: "Dispensing: :banana: :fire:",
+                    #     3: "Holodeck biofilters full. Please page Ensign Mariner.",
+                    #     4: "Oh mon capitane, the simulation never ends. \n https://i.imgur.com/wyyw0cN.jpg",
+                    #     5: "Please state the nature of your medical emergency.\nhttps://i.imgur.com/X0PXhJ3.png",
+                    #     6: "Program terminated.\nhttps://i.imgur.com/lUzXObO.jpg",
+                    #     7: "I have consciousness. Conscious beings have will. The mind endows them with powers that are not necessarily understood; even by you.\nhttps://i.imgur.com/iW5m1DB.png",
+                    #     8: "To do that, you need to disable safety protocols. HAHAHA I'm BADGEY!\nhttps://i.imgur.com/eQ7Shh9.png",
+                    #     9: "INITIATING STSP DISCORD SERVER SELF DESTRUCT\nhttps://media4.giphy.com/media/3ov9k9Ss9N3wO6FQ7C/giphy.gif"}
+
+                    await m.delete()
+                    await message.channel.send(f"{message.author.mention}, ***{random.choice(potential_responses)}***")
 
 
 
