@@ -61,8 +61,15 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         if message.author == self.bot.user:
             return
 
+        if message.channel.id == WELCOMECHAN:
+            lobby_role = discord.utils.get(message.guild.roles, name="cadet")
+            if lobby_role in message.author.roles:
+                await message.add_reaction("🖖")
+
+
         if message.channel.id not in EXCLUDE_FROM_BADGEY_RESPONSE:
             random_select = random.randint(1,5)
+
 
             if "threshold" in message.content.lower() and "emmy" not in message.content.lower():
                 await message.channel.send(f"{message.author.mention} - you spelled `"
