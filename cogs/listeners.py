@@ -62,7 +62,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             return
 
         if message.channel.id == WELCOMECHAN:
-            lobby_role = discord.utils.get(message.guild.roles, name="cadet")
+            lobby_role = discord.utils.get(message.guild.roles, name=restricted)
             if lobby_role in message.author.roles:
                 await message.add_reaction("🖖")
 
