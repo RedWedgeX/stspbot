@@ -269,6 +269,26 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
         except discord.errors.NotFound:  # happens when a moderator purges themself
             pass
 
+    # WHODIDIMISS
+    @commands.command(name='whodidimiss', aliases=['miss'])
+    @commands.has_any_role(staff, mods)
+    async def whodidimiss(self, ctx):
+        async with ctx.typing():
+            message = await ctx.send("Working, please stand by.")
+            missed_posts = {}
+            welcome_channel = self.bot.get_channel(WELCOMECHAN)
+            new_member_role = discord.utils.get(ctx.guild.roles, name=restricted)
+            async for m in welcome_channel.history(limit=500):
+                if new_member_role in m.author.roles and m.author.id not in missed_posts:
+
+                    missed_posts[m.author.id] = m.jump_url
+            await message.delete()
+            await ctx.send("The following users have posted in the welcome channel but not been admitted yet:")
+            for user_id in missed_posts:
+                await ctx.send(f"<@{user_id}>: {missed_posts[user_id]}")
+
+
+
     # ROLELIST
     @commands.command()
     @commands.has_any_role(staff, mods)
