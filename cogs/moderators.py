@@ -283,9 +283,11 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
 
                     missed_posts[m.author.id] = m.jump_url
             await message.delete()
-            await ctx.send("The following users have posted in the welcome channel but not been admitted yet:")
-            for user_id in missed_posts:
-                await ctx.send(f"<@{user_id}>: {missed_posts[user_id]}")
+            if missed_posts:
+                await ctx.send("The following users have posted in the welcome channel but not been admitted yet:")
+                for user_id in missed_posts:
+                    await ctx.send(f"<@{user_id}>: {missed_posts[user_id]}")
+            else: await ctx.send("You're good! No missed welcomes found in the last 500 messages.")
 
 
 
