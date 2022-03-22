@@ -89,10 +89,12 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             if "group" in message.content.lower() and random_select == 1:
                 await message.channel.send(f"*gronp")
 
-            if "even the" in message.content.lower()[:10]:
+            if "even the" in message.content.lower()[:10] and message.content.lower()[-1] == "?":
                 m = message.content.lower()
                 m = m.split("even the ", 1)
                 m = ' '.join(m)
+                if m[0] == " ":
+                    m = m[1:]
                 m = re.sub(r'[^\w\s]', '', m)
                 await message.channel.send(f"{message.author.mention} - ESPECIALLY the {m}!")
 
