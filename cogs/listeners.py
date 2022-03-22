@@ -124,15 +124,15 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         channel = self.bot.get_channel(payload.channel_id)
-        user = payload.member
+        reacting_user = payload.member
         message = await channel.fetch_message(payload.message_id)
         admin_role = discord.utils.get(channel.guild.roles, name=staff)
         mod_role = discord.utils.get(channel.guild.roles, name=mods)
-        role = discord.utils.get(user.guild.roles, name=restricted)
+        role = discord.utils.get(reacting_user.guild.roles, name=restricted)
 
         # handle mods using  reacts to welcome people
         if payload.channel_id == WELCOMECHAN and \
-                (admin_role in user.roles or mod_role in user.roles) and \
+                (admin_role in reacting_user.roles or mod_role in reacting_user.roles) and \
                 role in message.author.roles:
 
             new_member = message.author
@@ -142,7 +142,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             await new_member.remove_roles(role)
             syslog = self.bot.get_channel(SYSLOG)
 
-            await syslog.send(f"{new_member.mention} welcomed to the server by `{user.display_name}`")
+            await syslog.send(f"{new_member.mention} welcomed to the server by `{reacting_user.display_name}`")
             message = ("Thanks for introducing yourself. You now have full member access to our "
                        f"channels. Stop by <#{ROLE_CHANNEL}> and self-assign some permissions!")
             await wchan.send(f"{new_member.mention}, {message}")
@@ -155,8 +155,8 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 react = payload.emoji.name
             else:
                 react = payload.emoji
-            role = discord.utils.get(user.guild.roles, name=SELF_ASSIGN_ROLES[react])
-            await user.add_roles(role)
+            role = discord.utils.get(reacting_user.guild.roles, name=SELF_ASSIGN_ROLES[react])
+            await reacting_user.add_roles(role)
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload):
