@@ -128,16 +128,17 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         message = await channel.fetch_message(payload.message_id)
         admin_role = discord.utils.get(channel.guild.roles, name=staff)
         mod_role = discord.utils.get(channel.guild.roles, name=mods)
+        role = discord.utils.get(user.guild.roles, name=restricted)
 
-        # handle mods using thumbs-up to welcome people
+        # handle mods using  reacts to welcome people
         if payload.channel_id == WELCOMECHAN and \
-                (admin_role in user.roles or mod_role in user.roles):
+                (admin_role in user.roles or mod_role in user.roles) and \
+                role in user.roles:
 
             new_member = message.author
 
             wchan = self.bot.get_channel(WELCOMECHAN)
 
-            role = discord.utils.get(user.guild.roles, name=restricted)
             await new_member.remove_roles(role)
             syslog = self.bot.get_channel(SYSLOG)
 
