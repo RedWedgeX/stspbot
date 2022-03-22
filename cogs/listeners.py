@@ -133,7 +133,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         # handle mods using  reacts to welcome people
         if payload.channel_id == WELCOMECHAN and \
                 (admin_role in user.roles or mod_role in user.roles) and \
-                role in user.roles:
+                role in message.author.roles:
 
             new_member = message.author
 
