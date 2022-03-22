@@ -70,6 +70,11 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         if message.channel.id not in EXCLUDE_FROM_BADGEY_RESPONSE:
             random_select = random.randint(1,5)
 
+            if str(self.bot.user.id) in message.content:
+                await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
+
+            if "smart" in message.content.lower() and random_select == 1:
+                await message.channel.send(f"{message.author.mention} https://memegenerator.net/img/instances/60652316/we-are-smart.jpg")
 
             if "threshold" in message.content.lower() and "emmy" not in message.content.lower():
                 await message.channel.send(f"{message.author.mention} - you spelled `"
