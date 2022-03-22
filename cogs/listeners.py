@@ -70,6 +70,10 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         if message.channel.id not in EXCLUDE_FROM_BADGEY_RESPONSE:
             random_select = random.randint(1,5)
 
+            #DEBUGGING
+            if str(self.bot.user.id) in message.content:
+                print(f"MENTION: {message.content}\nLAST CHAR: {message.content[len(message.content)-1]}")
+
             if str(self.bot.user.id) in message.content and message.content[len(message.content)-1] == "?":
                 await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
 
