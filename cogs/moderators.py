@@ -279,9 +279,11 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
             welcome_channel = self.bot.get_channel(WELCOMECHAN)
             new_member_role = discord.utils.get(ctx.guild.roles, name=restricted)
             async for m in welcome_channel.history(limit=500):
-                if new_member_role in m.author.roles and m.author.id not in missed_posts:
-
-                    missed_posts[m.author.id] = m.jump_url
+                try:
+                    if new_member_role in m.author.roles and m.author.id not in missed_posts:
+                        missed_posts[m.author.id] = m.jump_url
+                except:
+                    pass
             await message.delete()
             if missed_posts:
                 await ctx.send("The following users have posted in the welcome channel but not been admitted yet:")
