@@ -54,9 +54,6 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         april_first = dt.strptime("4/1/2022", "%m/%d/%Y")
         pst_now = dt.now(pdt_zone)
         if april_first.date() == pst_now.date():
-            print("YES")
-        else:
-            print("NO")
             await member.edit(nick="Q")
 
 
