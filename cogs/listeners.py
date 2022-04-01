@@ -7,6 +7,8 @@ from discord.errors import HTTPException
 from discord.ext import commands
 from random import randrange
 from utils.config import *
+from datetime import datetime as dt
+from pytz import timezone
 
 # -------URL Match anti-spam prevention --
 urlMatchedUsers = []  # stores by snowflake ID
@@ -46,6 +48,18 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
     # NEW USER PROCESSING
     @commands.Cog.listener()
     async def on_member_join(self, member):
+
+        #CHECK FOR APRIL FOOLS
+        pdt_zone = timezone("America/Los_Angeles")
+        april_first = dt.strptime("4/1/2022", "%m/%d/%Y")
+        pst_now = dt.now(pdt_zone)
+        if april_first.date() == pst_now.date():
+            print("YES")
+        else:
+            print("NO")
+            await member.edit(nick="Q")
+
+
         onjoinmsg = JOIN_MESSAGE
 
         channel = self.bot.get_channel(WELCOMECHAN)
