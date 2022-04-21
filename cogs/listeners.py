@@ -84,7 +84,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             if str(self.bot.user.id) in message.content and message.content[len(message.content)-1] == "?":
                 await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
 
-            if "smart" in message.content.lower() and random_select == 1:
+            if "smart" in message.content.lower() and random_select == random.randint(1,5):
                 await message.channel.send(f"{message.author.mention} https://memegenerator.net/img/instances/60652316/we-are-smart.jpg")
 
             if "threshold" in message.content.lower() and "emmy" not in message.content.lower():
@@ -94,10 +94,10 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             if "tuvix" in message.content.lower():
                 await message.channel.send(f"{message.author.mention} - JANEWAY WAS RIGHT.")
 
-            if " run" in message.content.lower() and random_select == 1:
+            if " run" in message.content.lower() and random_select == random.randint(1,5):
                 await message.channel.send(f"{message.author.mention} - NO RUNNING ON THE PROMENADE. ***humph***")
 
-            if "group" in message.content.lower() and random_select == 1:
+            if "group" in message.content.lower() and random_select == random.randint(1,5):
                 await message.channel.send(f"*gronp")
 
             if "even the" in message.content.lower()[:10] and message.content.lower()[-1] == "?":
