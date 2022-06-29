@@ -25,10 +25,11 @@ class Extras(commands.Cog, name="Stuff for funzies"):
             await ctx.send
 
     @commands.command()
-    async def ama(self, ctx, query):
+    async def ama(self, ctx, *query: str):
+        question = ' '.join(query)
         try:
-            answer = openai_q_and_a(query)
-            await ctx.send(f"{ctx.message.author.mention} asked: ```{query}```:\n**Answer**: ```{answer}````")
+            answer = openai_q_and_a(question)
+            await ctx.send(f"{ctx.message.author.mention} asked: ```{question}```:\n**Answer**: ```{answer}````")
         except Exception as e:
             await ctx.send(f"Sorry {ctx.message.author}, something went wrong.")
 
