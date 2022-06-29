@@ -29,6 +29,7 @@ class Extras(commands.Cog, name="Stuff for funzies"):
         question = ' '.join(query)
         try:
             answer = openai_q_and_a(question)
+            print(answer)
             await ctx.send(f"{ctx.message.author.mention} asked: ```{question}```:\n**Answer**: ```{answer}````")
         except Exception as e:
             await ctx.send(f"Sorry {ctx.message.author}, something went wrong.")
