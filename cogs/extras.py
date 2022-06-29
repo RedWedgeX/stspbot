@@ -28,7 +28,7 @@ class Extras(commands.Cog, name="Stuff for funzies"):
     async def ama(self, ctx, query):
         try:
             answer = openai_q_and_a(query)
-            await ctx.send(f"{ctx.message.author} asked: `{query}`:\nAnswer: `{answer}`")
+            await ctx.send(f"{ctx.message.author.mention} asked: ```{query}```:\n**Answer**: ```{answer}````")
         except Exception as e:
             await ctx.send(f"Sorry {ctx.message.author}, something went wrong.")
 

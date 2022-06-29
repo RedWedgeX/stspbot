@@ -28,7 +28,7 @@ def openai_q_and_a(query):
         presence_penalty=0.0,
         stop=["\n"]
     )
-    return response
+    return response['choices'][0]['text']
 
 def remove_non_ascii(s):
     """Remove non-ASCII characters from a Unicode string. Removes @ (at symbol, decimal
