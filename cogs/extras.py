@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from utils.helpers import openai_q_and_a
 from utils.config import *
 import traceback
 
@@ -22,6 +23,14 @@ class Extras(commands.Cog, name="Stuff for funzies"):
             await ctx.send(f'```py\n{traceback.format_exc()}\n```')
         else:
             await ctx.send
+
+    @commands.command()
+    async def ama(self, ctx, query):
+        try:
+            answer = openai_q_and_a(query)
+            await ctx.send(f"{ctx.message.author} asked: `{query}`:\nAnswer: `{answer}`")
+        except Exception as e:
+            await ctx.send(f"Sorry {ctx.message.author}, something went wrong.")
 
 def setup(client):
     client.add_cog(Extras(client))
