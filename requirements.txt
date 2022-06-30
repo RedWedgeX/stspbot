@@ -1,7 +1,6 @@
 requests
 pytz
 aiosqlite
-pynacl
 ffmpeg
 discord.py[voice]
 openai

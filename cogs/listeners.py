@@ -9,6 +9,7 @@ from random import randrange
 from utils.config import *
 from datetime import datetime as dt
 from pytz import timezone
+from utils.helpers import openai_q_and_a
 
 # -------URL Match anti-spam prevention --
 urlMatchedUsers = []  # stores by snowflake ID
@@ -77,15 +78,34 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             if lobby_role in message.author.roles:
                 await message.add_reaction("🖖")
 
+        # Ask-me-anything OpenAI handling
+        print(message.content.lower())
+        if message.content.lower().startswith('computer') and "?" in message.content.lower():
+            async with message.channel.typing():
+                await message.delete()
+                print(message.content.lower())
+                # query = ' '.join(message.content.lower())
+                query = message.content.lower()
+                query = re.sub('<[^>]+>', '', query)
+                query = query.replace('computer', '')
+                query = query.replace(',', '')
+                print(query)
+                try:
+                    answer = openai_q_and_a(query)
+                    await message.channel.send(f"{message.author.mention} asked: ```{query}```\n**Answer**: ```{answer}```")
+                except Exception as e:
+                    await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
+                    print(e)
 
         if message.channel.id not in EXCLUDE_FROM_BADGEY_RESPONSE:
             random_select = random.randint(1,5)
 
-            if str(self.bot.user.id) in message.content and message.content[len(message.content)-1] == "?":
-                await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
+            # if str(self.bot.user.id) in message.content and message.content[len(message.content)-1] == "?":
+            #     await message.channel.send(f"{message.author.mention} https://tenor.com/bJlBU.gif")
 
             if "smart" in message.content.lower() and random_select == random.randint(1,5):
-                await message.channel.send(f"{message.author.mention} https://memegenerator.net/img/instances/60652316/we-are-smart.jpg")
+                await message.channel.send(f"{message.author.mention}"
+                                           f" https://memegenerator.net/img/instances/60652316/we-are-smart.jpg")
 
             if "threshold" in message.content.lower() and "emmy" not in message.content.lower():
                 await message.channel.send(f"{message.author.mention} - you spelled `"

@@ -21,13 +21,14 @@ def openai_q_and_a(query):
     response = openai.Completion.create(
         model="text-davinci-002",
         prompt=query,
-        temperature=0,
-        max_tokens=100,
+        temperature=0.7,
+        max_tokens=256,
         top_p=1,
-        frequency_penalty=0.0,
-        presence_penalty=0.0,
-        stop=["\n"]
+        frequency_penalty=0,
+        presence_penalty=0
     )
+
+    print(response)
     return response['choices'][0]['text']
 
 def remove_non_ascii(s):
