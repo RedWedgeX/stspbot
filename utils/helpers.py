@@ -24,9 +24,11 @@ def openai_q_and_a(query):
         temperature=0.7,
         max_tokens=256,
         top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
+        best_of=4,
+        frequency_penalty=0.43,
+        presence_penalty=0.25
     )
+
 
     print(response)
     return response['choices'][0]['text']
