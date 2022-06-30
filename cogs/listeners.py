@@ -83,7 +83,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         if (message.content.lower().startswith('computer') or self.bot.user.mentioned_in(message)) \
                 and "?" in message.content.lower():
             async with message.channel.typing():
-                await message.delete()
+                # await message.delete()
                 print(message.content.lower())
                 # query = ' '.join(message.content.lower())
                 query = message.content.lower()
