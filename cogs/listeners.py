@@ -80,7 +80,8 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
 
         # Ask-me-anything OpenAI handling
         print(message.content.lower())
-        if message.content.lower().startswith('computer') and "?" in message.content.lower():
+        if (message.content.lower().startswith('computer') or self.bot.user.mentioned_in(message)) \
+                and "?" in message.content.lower():
             async with message.channel.typing():
                 await message.delete()
                 print(message.content.lower())
