@@ -18,9 +18,9 @@ class User(commands.Cog, name="General User Commands"):
             embed = discord.Embed()
 
             if ctx.guild.icon:
-                embed.set_thumbnail(url=ctx.guild.icon_url)
+                embed.set_thumbnail(url=ctx.guild.icon.url)
             if ctx.guild.banner:
-                embed.set_image(url=ctx.guild.banner_url_as(format="png"))
+                embed.set_image(url=ctx.guild.banner.url)
 
             embed.add_field(name="Server Name", value=ctx.guild.name, inline=True)
             embed.add_field(name="Server ID", value=ctx.guild.id, inline=True)
