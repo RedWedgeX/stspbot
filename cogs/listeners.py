@@ -2,13 +2,15 @@ import asyncio
 import random
 import re
 
-import discord
-from discord.errors import HTTPException
-from discord.ext import commands
+import nextcord as discord
+from nextcord.errors import HTTPException
+from nextcord.ext import commands
 from random import randrange
 from utils.config import *
+
 from datetime import datetime as dt
 from pytz import timezone
+from utils.helpers import cgpt
 from utils.helpers import openai_q_and_a
 
 # -------URL Match anti-spam prevention --
@@ -80,23 +82,37 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
 
         # Ask-me-anything OpenAI handling
         print(message.content.lower())
-        if (message.content.lower().startswith('computer') or self.bot.user.mentioned_in(message)) \
-                and "?" in message.content.lower():
+        if self.bot.user.mentioned_in(message):
             async with message.channel.typing():
-                # await message.delete()
-                print(message.content.lower())
-                # query = ' '.join(message.content.lower())
                 query = message.content.lower()
                 query = re.sub('<[^>]+>', '', query)
                 query = query.replace('computer', '')
                 query = query.replace(',', '')
                 print(query)
                 try:
-                    answer = openai_q_and_a(query)
-                    await message.channel.send(f"{message.author.mention} asked: ```{query}```\n**Answer**: ```{answer}```")
+                    answer = cgpt(query, message.author.id)
+                    await message.channel.send(f"{message.author.mention} - {answer}")
                 except Exception as e:
                     await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
                     print(e)
+
+        # if (message.content.lower().startswith('computer') or self.bot.user.mentioned_in(message)) \
+        #         and "?" in message.content.lower():
+        #     async with message.channel.typing():
+        #         # await message.delete()
+        #         print(message.content.lower())
+        #         # query = ' '.join(message.content.lower())
+        #         query = message.content.lower()
+        #         query = re.sub('<[^>]+>', '', query)
+        #         query = query.replace('computer', '')
+        #         query = query.replace(',', '')
+        #         print(query)
+        #         try:
+        #             answer = openai_q_and_a(query, message.author.id)
+        #             await message.channel.send(f"{message.author.mention} asked: ```{query}```\n**Answer**: ```{answer}```")
+        #         except Exception as e:
+        #             await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
+        #             print(e)
 
         if message.channel.id not in EXCLUDE_FROM_BADGEY_RESPONSE:
             random_select = random.randint(1,5)

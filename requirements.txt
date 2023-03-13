@@ -3,4 +3,4 @@ pytz
 aiosqlite
 ffmpeg
 discord.py[voice]
-openai
+revChatGPT
