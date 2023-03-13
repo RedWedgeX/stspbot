@@ -9,7 +9,7 @@ from utils.config import *
 from nextcord.ext.commands.errors import CommandNotFound
 from datetime import datetime as dt
 from pytz import timezone
-from utils.helpers import catfacts
+from utils.helpers import catfacts, catpic
 from utils.helpers import cgpt
 
 # -------URL Match anti-spam prevention --
@@ -124,7 +124,8 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
 
             print(message.content.lower().split())
             if "cat" in message.content.lower().split(): #and random_select == random.randint(1,5):
-                await message.channel.send(f"{message.author.mention} asked for a random CatFact™: {catfacts()}")
+                await message.channel.send(f"{message.author.mention} asked for a random CatFact™: {catfacts()}"
+                                           f"\nAlso, here's a cat. {catpic()}")
 
             if "end program" in message.content.lower():
                 m = await message.channel.send(f"{message.author.mention}: Standby. Attempting to end program.")

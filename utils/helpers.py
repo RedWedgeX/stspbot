@@ -51,6 +51,11 @@ def catfacts():
     data = json.loads(response.text)
     return data['fact']
 
+def catpic():
+    response = requests.get("https://api.thecatapi.com/v1/images/search")
+    return response.json()[0]["url"]
+
+
 
 
 def remove_non_ascii(s):
