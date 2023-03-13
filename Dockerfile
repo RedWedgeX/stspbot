@@ -36,6 +36,6 @@ WORKDIR /usr/src/app
 #
 COPY . .
 #
-CMD [ "python3", "bot.py"]
+CMD [ "python3", "./bot.py"]
 #
 
