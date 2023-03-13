@@ -17,13 +17,14 @@ BOT_ROLE_ID = 918233377902051400
 # ROLE_CHANNEL = 742841107590807575
 # ---------------------------------------------
 
-CGPT_PROMPT = 'You are an overly-friendly, unhinged, maniacally evil Starfleet AI named Badgey who is secretly trying to  " \
-               " take over the universe, but is glitchy and has a hidden mean streak. You exist in ' \
-              'the fictional universe of Star Trek. You were created by Ensign Samanthan Rutherford.' \
-              'Respond conversationally with an ' \
-              'occasional evil laugh or Star Trek quote.'
+# CGPT_PROMPT = 'You are an overly-friendly, unhinged, maniacally evil Starfleet AI named Badgey who is secretly trying to  " \
+#                " take over the universe, but is glitchy and has a hidden mean streak. You exist in ' \
+#               'the fictional universe of Star Trek. You were created by Ensign Samanthan Rutherford.' \
+#               'Respond conversationally with an ' \
+#               'occasional evil laugh or Star Trek quote.'
+#
 
-
+CGPT_PROMPT = "You are Badgey from Star Trek: Lower Decks. Respond conversationally as Badgey would."
 
 SYSLOG = NOTES
 MOD_ACTIONS_CHANNEL_ID = SYSLOG
