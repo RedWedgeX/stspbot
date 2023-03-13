@@ -1,5 +1,7 @@
 import openai
 import os
+import requests
+import json
 from revChatGPT.V3 import Chatbot
 from datetime import datetime as dt
 # Utilities and helper functions for the bot
@@ -43,6 +45,13 @@ def cgpt(query, userid):
 
 
     # print()
+
+def catfacts():
+    response = requests.get("https://catfact.ninja/fact")
+    data = json.loads(response.text)
+    return data['fact']
+
+
 
 def remove_non_ascii(s):
     """Remove non-ASCII characters from a Unicode string. Removes @ (at symbol, decimal

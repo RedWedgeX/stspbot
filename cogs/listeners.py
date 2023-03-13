@@ -9,6 +9,7 @@ from utils.config import *
 from nextcord.ext.commands.errors import CommandNotFound
 from datetime import datetime as dt
 from pytz import timezone
+from utils.helpers import catfacts
 from utils.helpers import cgpt
 
 # -------URL Match anti-spam prevention --
@@ -78,8 +79,6 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             if lobby_role in message.author.roles:
                 await message.add_reaction("🖖")
 
-        # Ask-me-anything OpenAI handling
-        #if self.bot.user.mentioned_in(message) and \
         if message.content.startswith(f"<@{self.bot.user.id}") or message.content.startswith(f"<@&{BOT_ROLE_ID}"):
             async with message.channel.typing():
                 query = message.content.lower()
@@ -122,6 +121,10 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
 
             if "group" in message.content.lower() and random_select == random.randint(1,5):
                 await message.channel.send(f"*gronp")
+
+            print(message.content.lower().split())
+            if "cat" in message.content.lower().split(): #and random_select == random.randint(1,5):
+                await message.channel.send(f"{message.author.mention} asked for a random CatFact™: {catfacts()}")
 
             if "end program" in message.content.lower():
                 m = await message.channel.send(f"{message.author.mention}: Standby. Attempting to end program.")
