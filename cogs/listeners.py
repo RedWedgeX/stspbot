@@ -107,7 +107,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
 
             if "smart" in message.content.lower() and random_select == random.randint(1,5):
                 await message.channel.send(f"{message.author.mention}"
-                                           f" https://memegenerator.net/img/instances/60652316/we-are-smart.jpg")
+                                           f" https://y.yarn.co/2d76d403-f797-4cfc-83f6-a7a90b2e8d78_text.gif")
 
             if "threshold" in message.content.lower() and "emmy" not in message.content.lower():
                 await message.channel.send(f"{message.author.mention} - you spelled `"
