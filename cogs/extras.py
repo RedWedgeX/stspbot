@@ -14,7 +14,6 @@ class Extras(commands.Cog, name="Stuff for funzies"):
         async with ctx.typing():
             query = ' '.join(query)
             # query = ctx.message.content
-            print(f"query: {query}")
             response = self.bot.chatbot.ask(convo_id=ctx.message.author.id, prompt=query)
             await ctx.send(response)
 

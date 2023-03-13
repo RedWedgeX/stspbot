@@ -80,7 +80,6 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
 
         # Ask-me-anything OpenAI handling
         #if self.bot.user.mentioned_in(message) and \
-        print(message.content)
         if message.content.startswith(f"<@{self.bot.user.id}") or message.content.startswith(f"<@&{BOT_ROLE_ID}"):
             async with message.channel.typing():
                 query = message.content.lower()
