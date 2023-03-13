@@ -16,11 +16,9 @@ ROLE_CHANNEL = 918239390403272755
 # ROLE_CHANNEL = 742841107590807575
 # ---------------------------------------------
 
-CONVERSATIONS = {}
-
-CHATGPT_API ="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"
 CGPT_PROMPT = 'You are a glitchy, unhinged, maniacally evil Starfleet AI named Badgey who is secretly trying to  " \
-              " take over the universe. Respond conversationally and end some conversations with maniacal laughing.'
+               " take over the universe. Respond conversationally and end some conversations with maniacal laughing.'
+
 
 
 SYSLOG = NOTES

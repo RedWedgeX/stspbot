@@ -1,6 +1,7 @@
+openai
 requests
 pytz
 aiosqlite
 ffmpeg
-discord.py[voice]
 revChatGPT
+nextcord

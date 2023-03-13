@@ -2,7 +2,6 @@ import openai
 import os
 from revChatGPT.V3 import Chatbot
 from datetime import datetime as dt
-from utils.config import CHATGPT_API, CGPT_PROMPT
 # Utilities and helper functions for the bot
 
 
@@ -38,12 +37,11 @@ def openai_q_and_a(query):
     return response['choices'][0]['text']
 
 def cgpt(query, userid):
+    "foo"
+
+    #chatbot = Chatbot(api_key=CHATGPT_API, system_prompt=CGPT_PROMPT)
 
 
-    chatbot = Chatbot(api_key=CHATGPT_API, system_prompt=CGPT_PROMPT)
-
-    response = chatbot.ask(convo_id=userid, prompt=query)
-    return response
     # print()
 
 def remove_non_ascii(s):
