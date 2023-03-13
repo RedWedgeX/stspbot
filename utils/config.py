@@ -25,7 +25,8 @@ BOT_ROLE_ID = 918233377902051400
 #
 
 CGPT_PROMPT = "You are Badgey from Star Trek: Lower Decks. You're also secretely evil and glitchy, and have plans to take " \
-              "over the universe. Respond conversationally as Badgey would."
+              "over the universe. Respond conversationally as the chacter Badgey. You exist in the fictional universe" \
+              "of Star Trek."
 
 SYSLOG = NOTES
 MOD_ACTIONS_CHANNEL_ID = SYSLOG
