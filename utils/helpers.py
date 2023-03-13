@@ -1,7 +1,10 @@
 import openai
 import os
-
+from revChatGPT.V3 import Chatbot
+from datetime import datetime as dt
 # Utilities and helper functions for the bot
+
+
 
 def groups(seq, length):
     """Generator to yield groups of the specified length from a sequence. For example, to
@@ -32,6 +35,14 @@ def openai_q_and_a(query):
 
     print(response)
     return response['choices'][0]['text']
+
+def cgpt(query, userid):
+    "foo"
+
+    #chatbot = Chatbot(api_key=CHATGPT_API, system_prompt=CGPT_PROMPT)
+
+
+    # print()
 
 def remove_non_ascii(s):
     """Remove non-ASCII characters from a Unicode string. Removes @ (at symbol, decimal

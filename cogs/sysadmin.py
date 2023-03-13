@@ -1,7 +1,7 @@
-import discord
-from discord.ext import commands, tasks
+import nextcord
+from nextcord.ext import commands, tasks
 from utils.config import *
-from discord.errors import HTTPException
+from nextcord.errors import HTTPException
 SUCCESS = '**`SUCCESS`**'
 ERROR = '**`ERROR`**'
 

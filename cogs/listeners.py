@@ -2,14 +2,14 @@ import asyncio
 import random
 import re
 
-import discord
-from discord.errors import HTTPException
-from discord.ext import commands
+import nextcord as discord
+from nextcord.ext import commands
 from random import randrange
 from utils.config import *
+from nextcord.ext.commands.errors import CommandNotFound
 from datetime import datetime as dt
 from pytz import timezone
-from utils.helpers import openai_q_and_a
+from utils.helpers import cgpt
 
 # -------URL Match anti-spam prevention --
 urlMatchedUsers = []  # stores by snowflake ID
@@ -79,21 +79,23 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 await message.add_reaction("🖖")
 
         # Ask-me-anything OpenAI handling
-        print(message.content.lower())
-        if (message.content.lower().startswith('computer') or self.bot.user.mentioned_in(message)) \
-                and "?" in message.content.lower():
+        #if self.bot.user.mentioned_in(message) and \
+        if message.content.startswith(f"<@{self.bot.user.id}") or message.content.startswith(f"<@&{BOT_ROLE_ID}"):
             async with message.channel.typing():
-                # await message.delete()
-                print(message.content.lower())
-                # query = ' '.join(message.content.lower())
                 query = message.content.lower()
                 query = re.sub('<[^>]+>', '', query)
                 query = query.replace('computer', '')
                 query = query.replace(',', '')
-                print(query)
+                print(f"Query: {query}")
                 try:
-                    answer = openai_q_and_a(query)
-                    await message.channel.send(f"{message.author.mention} asked: ```{query}```\n**Answer**: ```{answer}```")
+                    async with message.channel.typing():
+                        # query = ctx.message.content
+                        print(f"query: {query}")
+                        response = self.bot.chatbot.ask(convo_id=message.author.id, prompt=query)
+                        await message.channel.send(f"{message.author.mention} - {response}")
+                except CommandNotFound as er:
+                    print(er)
+                    pass
                 except Exception as e:
                     await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
                     print(e)
@@ -120,15 +122,6 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
 
             if "group" in message.content.lower() and random_select == random.randint(1,5):
                 await message.channel.send(f"*gronp")
-
-            if "even the" in message.content.lower()[:10] and message.content.lower()[-1] == "?":
-                m = message.content.lower()
-                m = m.split("even the ", 1)
-                m = ' '.join(m)
-                if m[0] == " ":
-                    m = m[1:]
-                m = re.sub(r'[^\w\s]', '', m)
-                await message.channel.send(f"{message.author.mention} - ESPECIALLY the {m}!")
 
             if "end program" in message.content.lower():
                 m = await message.channel.send(f"{message.author.mention}: Standby. Attempting to end program.")

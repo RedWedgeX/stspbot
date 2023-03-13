@@ -2,9 +2,9 @@ import asyncio
 from datetime import datetime
 
 import aiosqlite
-import discord
-from discord.ext import tasks, commands
-
+import nextcord as discord
+from nextcord.ext import tasks, commands
+from revChatGPT.V1 import Chatbot
 from utils.config import *
 
 
@@ -15,6 +15,18 @@ class Tasks(commands.Cog, name="Automatic Tasks"):
 
     def cog_unload(self):
         self.check_timeouts.cancel()
+
+    @tasks.loop(hours=5)
+    async def pop_cgtp_conversations(self):
+        CHATGPT_CONFIG = {"access_token": CGPT_TOKEN}
+        chatbot = Chatbot(config=CHATGPT_CONFIG)
+
+        for userid in CONVERSATIONS:
+            if userid['last_updated'] < datetime.datetime.now()-datetime.timedelta(hours=1):
+                "foo"
+                chatbot.delete_conversation(userid['conversation'])
+
+
 
     @tasks.loop(minutes=5)
     async def check_timeouts(self):

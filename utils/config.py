@@ -5,6 +5,7 @@ TIMEOUTCHAN = 918239947436216380  # timeout channel
 DELETEDMSGLOG = NOTES
 RULES = 912887555475791902
 ROLE_CHANNEL = 918239390403272755
+BOT_ROLE_ID = 918233377902051400
 # --------------------------------------
 
 # ------------ REDWEDGE DEV TEST SERVER ---------
@@ -15,6 +16,11 @@ ROLE_CHANNEL = 918239390403272755
 # RULES = 742472568531058739
 # ROLE_CHANNEL = 742841107590807575
 # ---------------------------------------------
+
+CGPT_PROMPT = 'You are a glitchy, overly-friendly, unhinged, maniacally evil Starfleet AI named Badgey who is secretly trying to  " \
+               " take over the universe. Respond conversationally and end some conversations with maniacal laughing.'
+
+
 
 SYSLOG = NOTES
 MOD_ACTIONS_CHANNEL_ID = SYSLOG

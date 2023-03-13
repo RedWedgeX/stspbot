@@ -5,9 +5,9 @@ from datetime import datetime
 import time
 import aiosqlite
 # Library imports
-import discord
+import nextcord as discord
 import pytz
-from discord.ext import commands
+from nextcord.ext import commands
 
 # Local imports
 from utils.config import *
