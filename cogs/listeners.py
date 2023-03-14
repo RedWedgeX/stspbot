@@ -85,11 +85,8 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 query = re.sub('<[^>]+>', '', query)
                 query = query.replace('computer', '')
                 query = query.replace(',', '')
-                print(f"Query: {query}")
                 try:
                     async with message.channel.typing():
-                        # query = ctx.message.content
-                        print(f"query: {query}")
                         response = self.bot.chatbot.ask(convo_id=message.author.id, prompt=query)
                         await message.channel.send(f"{message.author.mention} - {response}")
                 except CommandNotFound as er:
