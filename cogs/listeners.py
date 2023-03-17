@@ -114,7 +114,18 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                     query = message.content
                     print(query)
                     response = self.bot.chatbot.ask(convo_id=message.author.id, prompt=query)
-                    await message.channel.send(f"{message.author.mention} - {response}")
+                    # Check if the message is longer than 2000 characters
+                    if len(response) > 1950:
+                        # Split the message into chunks of 2000 characters or less
+                        chunks = [response[i:i + 1950] for i in range(0, len(response), 1950)]
+
+                        # Send each chunk as a separate message
+                        for chunk in chunks:
+                            await message.channel.send(f"{message.author.mention} - {chunk}")
+                    else:
+                        # Send the message as is
+                        await message.channel.send(f"{message.author.mention} - {response}")
+
             except CommandNotFound as er:
                 pass
             except Exception as e:
