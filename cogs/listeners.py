@@ -88,6 +88,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 async with message.channel.typing():
                     # SUGGESTED BY CHATGPT to replace usernames in messages with the discord nickname -----
                     if '<@' in message.content:
+                        print("<@ in message.content")
                         # Loop through each user ID in the message
                         for user_id in message.content.split():
                             if '<@' in user_id:
