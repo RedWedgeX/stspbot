@@ -80,7 +80,8 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 await message.add_reaction("🖖")
 
         if message.content.startswith(f"<@{self.bot.user.id}") or message.content.startswith(f"<@&{BOT_ROLE_ID}"):
-            # query = message.content.lower()
+            print(message.content)
+            query = message.content.lower()
             # query = re.sub('<[^>]+>', '', query)
             # query = query.replace('computer', '')
             # query = query.replace(',', '')
