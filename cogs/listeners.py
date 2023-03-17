@@ -97,6 +97,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                                 user = await self.fetch_user(user_id)
                                 # Replace the user ID with their nickname in the message
                                 message.content = message.content.replace(f'<@{user_id}>', user.display_name)
+                                print(message.content)
 
                     # ---------
                     response = self.bot.chatbot.ask(convo_id=message.author.id, prompt=query)
