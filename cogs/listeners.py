@@ -86,32 +86,40 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             # query = query.replace(',', '')
             try:
                 async with message.channel.typing():
+                    print(message.content)
                     # SUGGESTED BY CHATGPT to replace usernames in messages with the discord nickname -----
                     if '<@' in message.content:
                         # Loop through each user ID in the message
                         try:
                             for user_id in message.content.split():
                                 if '<@&' not in user_id and '<@' in user_id:
-                                    # Remove the '<@' and '>' characters from the user ID
-                                    user_id = user_id.strip('<@!>')
-                                    # if user_id == f"&{self.bot.user.id}":
-                                    #     pass
-                                    # Get the user object from the ID
-                                    user = await self.bot.fetch_user(user_id)
-                                    # Replace the user ID with their nickname in the message
-                                    if str(user_id) != str(self.bot.user.id):
-                                        message.content = message.content.replace(f'<@{user_id}>', user.display_name)
+                                    if str(user_id) == str(self.bot.user.id):
+                                        message.content = message.content.replace(f'<@{user_id}>', "Badgey")
+                                    else:
+
+                                        # Remove the '<@' and '>' characters from the user ID
+                                        user_id = user_id.strip('<@!>')
+                                        # if user_id == f"&{self.bot.user.id}":
+                                        #     pass
+                                        # Get the user object from the ID
+                                        # user = await self.bot.fetch_user(user_id)
+                                        member = await message.guild.fetch_member(user_id)
+                                        # Replace the user ID with their nickname in the message
+
+                                        if str(user_id) != str(self.bot.user.id):
+                                            message.content = message.content.replace(f'<@{user_id}>', member.display_name)
                         except Exception as e:
                             raise(e)
                     # ---------
                     query = message.content
+                    print(query)
                     response = self.bot.chatbot.ask(convo_id=message.author.id, prompt=query)
                     await message.channel.send(f"{message.author.mention} - {response}")
             except CommandNotFound as er:
                 pass
             except Exception as e:
                 await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
-                raise e
+                await message.channel.send(f"```{e}```")
 
         if message.channel.id not in EXCLUDE_FROM_BADGEY_RESPONSE:
             random_select = random.randint(1,5)
