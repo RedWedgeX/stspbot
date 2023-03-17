@@ -71,6 +71,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+
         if message.author == self.bot.user:
             return
 
@@ -80,8 +81,6 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 await message.add_reaction("🖖")
 
         if message.content.startswith(f"<@{self.bot.user.id}") or message.content.startswith(f"<@&{BOT_ROLE_ID}"):
-            print(message.content)
-            query = message.content.lower()
             # query = re.sub('<[^>]+>', '', query)
             # query = query.replace('computer', '')
             # query = query.replace(',', '')
@@ -89,27 +88,30 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 async with message.channel.typing():
                     # SUGGESTED BY CHATGPT to replace usernames in messages with the discord nickname -----
                     if '<@' in message.content:
-                        print("<@ in message.content")
                         # Loop through each user ID in the message
-                        for user_id in message.content.split():
-                            if '<@' in user_id:
-                                # Remove the '<@' and '>' characters from the user ID
-                                user_id = user_id.strip('<@!>')
-                                # Get the user object from the ID
-                                user = await self.fetch_user(user_id)
-                                # Replace the user ID with their nickname in the message
-                                message.content = message.content.replace(f'<@{user_id}>', user.display_name)
-                                print(message.content)
-
+                        try:
+                            for user_id in message.content.split():
+                                if '<@&' not in user_id and '<@' in user_id:
+                                    # Remove the '<@' and '>' characters from the user ID
+                                    user_id = user_id.strip('<@!>')
+                                    # if user_id == f"&{self.bot.user.id}":
+                                    #     pass
+                                    # Get the user object from the ID
+                                    user = await self.bot.fetch_user(user_id)
+                                    # Replace the user ID with their nickname in the message
+                                    if str(user_id) != str(self.bot.user.id):
+                                        message.content = message.content.replace(f'<@{user_id}>', user.display_name)
+                        except Exception as e:
+                            raise(e)
                     # ---------
+                    query = message.content
                     response = self.bot.chatbot.ask(convo_id=message.author.id, prompt=query)
                     await message.channel.send(f"{message.author.mention} - {response}")
             except CommandNotFound as er:
-                print(er)
                 pass
             except Exception as e:
                 await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
-                print(e)
+                raise e
 
         if message.channel.id not in EXCLUDE_FROM_BADGEY_RESPONSE:
             random_select = random.randint(1,5)
