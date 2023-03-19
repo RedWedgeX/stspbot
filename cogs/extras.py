@@ -9,14 +9,18 @@ class Extras(commands.Cog, name="Stuff for funzies"):
 
 
     @commands.command(hidden=True)
-    @commands.has_any_role(staff, mods)
-    async def cgpt(self, ctx, *query: str):
+    @commands.has_any_role(staff)
+    async def enable(self, ctx):
         async with ctx.typing():
-            query = ' '.join(query)
-            # query = ctx.message.content
-            response = self.bot.chatbot.ask(convo_id=ctx.message.author.id, prompt=query)
-            await ctx.send(response)
+            self.bot.cgpt_enabled = True
+            await ctx.send("BadgeyGPT Enabled")
 
+    @commands.command(hidden=True)
+    @commands.has_any_role(staff)
+    async def disable(self, ctx):
+        async with ctx.typing():
+            self.bot.cgpt_enabled = False
+            await ctx.send("BadgeyGPT Disabled")
 
     @commands.command(hidden=True)
     @commands.has_any_role(staff)

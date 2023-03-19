@@ -33,7 +33,9 @@ def get_prefix(bot, message):
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
 
-bot = commands.Bot(command_prefix=get_prefix, description='Gronp Bot.', intents=intents)
+# bot = commands.Bot(command_prefix=get_prefix, description='Gronp Bot.', intents=intents)
+
+bot = commands.Bot(command_prefix="!", description='Gronp Bot.', intents=intents)
 
 # Here we load our extensions(cogs) listed above in [initial_extensions].
 if __name__ == '__main__':
@@ -58,7 +60,7 @@ async def on_ready():
     await bot.change_presence(
         activity=discord.Streaming(name='Dom Jot', url='https://www.facebook.com/groups/1477972915840370'))
     bot.chatbot = Chatbot(api_key=os.environ['CHATGPT_API'], system_prompt=CGPT_PROMPT)
-
+    bot.cgpt_enabled = True
     print(f'Successfully logged in and booted...!')
 
 

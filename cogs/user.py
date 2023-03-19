@@ -29,6 +29,7 @@ class User(commands.Cog, name="General User Commands"):
             embed.add_field(name="Owner", value=ctx.guild.owner, inline=True)
             embed.add_field(name="Region", value=ctx.guild.region, inline=True)
             embed.add_field(name="Created", value=helpers.date(ctx.guild.created_at), inline=True)
+            embed.add_field(name="OpenAI Enabled", value=self.bot.cgpt_enabled, inline=True)
             await ctx.send(content=f"ℹ information about **{ctx.guild.name}**", embed=embed)
 
 

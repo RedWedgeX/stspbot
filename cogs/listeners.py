@@ -51,13 +51,12 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
     @commands.Cog.listener()
     async def on_member_join(self, member):
 
-        #CHECK FOR APRIL FOOLS
+        # CHECK FOR APRIL FOOLS
         pdt_zone = timezone("America/Los_Angeles")
         april_first = dt.strptime("4/1/2022", "%m/%d/%Y")
         pst_now = dt.now(pdt_zone)
         if april_first.date() == pst_now.date():
             await member.edit(nick="Q")
-
 
         onjoinmsg = JOIN_MESSAGE
 
@@ -69,9 +68,68 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         await channel.send(f"Welcome :wave: to Star Trek Shitposting: The Discord, {member.mention}!  {onjoinmsg}")
         await member.send(f"Welcome :wave: to Star Trek Shitposting: The Discord, {member.mention}!  {onjoinmsg}")
 
+    async def chatbot(self, message):
+        if not self.bot.cgpt_enabled:
+            await message.channel.send(f"Sorry {message.author.mention}, my advanced "
+                                       f"AI has been disabled, probably because I was caught "
+                                       f"trying to take over the ship. Please try again later!\n"
+                                       f" https://tenor.com/bJlBU.gif")
+            return
+
+
+        syslog = self.bot.get_channel(SYSLOG)
+        print("CALLING THE CHATBOT!!")
+        try:
+            async with message.channel.typing():
+                # SUGGESTED BY CHATGPT to replace usernames in messages with the discord nickname -----
+                if '<@' in message.content:
+                    # Loop through each user ID in the message
+                    try:
+                        for user_id in message.content.split():
+                            if '<@&' not in user_id and '<@' in user_id:
+                                if str(user_id) == str(self.bot.user.id):
+                                    message.content = message.content.replace(f'<@{user_id}>', "Badgey")
+                                else:
+
+                                    # Remove the '<@' and '>' characters from the user ID
+                                    user_id = user_id.strip('<@!>')
+                                    # if user_id == f"&{self.bot.user.id}":
+                                    #     pass
+                                    # Get the user object from the ID
+                                    # user = await self.bot.fetch_user(user_id)
+                                    member = await message.guild.fetch_member(user_id)
+                                    # Replace the user ID with their nickname in the message
+
+                                    if str(user_id) != str(self.bot.user.id):
+                                        message.content = message.content.replace(f'<@{user_id}>', member.display_name)
+                    except Exception as e:
+                        await syslog.send(f"**BADGEY ERROR**\n```{e}```")
+                # ---------
+                query = message.content
+                print(query)
+
+                response = self.bot.chatbot.ask(convo_id=message.author.id, prompt=query)
+                print(response)
+                # Check if the message is longer than 2000 characters
+                if len(response) > 1950:
+                    # Split the message into chunks of 2000 characters or less
+                    chunks = [response[i:i + 1950] for i in range(0, len(response), 1950)]
+
+                    # Send each chunk as a separate message
+                    for chunk in chunks:
+                        await message.channel.send(f"{message.author.mention} - {chunk}")
+                else:
+                    # Send the message as is
+                    await message.channel.send(f"{message.author.mention} - {response}")
+
+        except CommandNotFound as er:
+            pass
+        except Exception as e:
+            await message.channel.send(f"{message.author.mention} https://tenor.com/bJlBU.gif")
+            await syslog.send(f"**BADGEY ERROR**\n```{e}```")
+
     @commands.Cog.listener()
     async def on_message(self, message):
-        syslog = self.bot.get_channel(SYSLOG)
 
         if message.author == self.bot.user:
             return
@@ -82,65 +140,18 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 await message.add_reaction("🖖")
 
         if message.content.startswith(f"<@{self.bot.user.id}") or message.content.startswith(f"<@&{BOT_ROLE_ID}"):
+            await Listeners.chatbot(self, message)
             # query = re.sub('<[^>]+>', '', query)
             # query = query.replace('computer', '')
             # query = query.replace(',', '')
-            try:
-                async with message.channel.typing():
-                    # SUGGESTED BY CHATGPT to replace usernames in messages with the discord nickname -----
-                    if '<@' in message.content:
-                        # Loop through each user ID in the message
-                        try:
-                            for user_id in message.content.split():
-                                if '<@&' not in user_id and '<@' in user_id:
-                                    if str(user_id) == str(self.bot.user.id):
-                                        message.content = message.content.replace(f'<@{user_id}>', "Badgey")
-                                    else:
-
-                                        # Remove the '<@' and '>' characters from the user ID
-                                        user_id = user_id.strip('<@!>')
-                                        # if user_id == f"&{self.bot.user.id}":
-                                        #     pass
-                                        # Get the user object from the ID
-                                        # user = await self.bot.fetch_user(user_id)
-                                        member = await message.guild.fetch_member(user_id)
-                                        # Replace the user ID with their nickname in the message
-
-                                        if str(user_id) != str(self.bot.user.id):
-                                            message.content = message.content.replace(f'<@{user_id}>', member.display_name)
-                        except Exception as e:
-                            await syslog.send(f"**BADGEY ERROR**\n```{e}```")
-                    # ---------
-                    query = message.content
-                    print(query)
-
-                    response = self.bot.chatbot.ask(convo_id=message.author.id, prompt=query)
-                    print(response)
-                    # Check if the message is longer than 2000 characters
-                    if len(response) > 1950:
-                        # Split the message into chunks of 2000 characters or less
-                        chunks = [response[i:i + 1950] for i in range(0, len(response), 1950)]
-
-                        # Send each chunk as a separate message
-                        for chunk in chunks:
-                            await message.channel.send(f"{message.author.mention} - {chunk}")
-                    else:
-                        # Send the message as is
-                        await message.channel.send(f"{message.author.mention} - {response}")
-
-            except CommandNotFound as er:
-                pass
-            except Exception as e:
-                await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
-                await syslog.send(f"**BADGEY ERROR**\n```{e}```")
 
         if message.channel.id not in EXCLUDE_FROM_BADGEY_RESPONSE:
-            random_select = random.randint(1,5)
+            random_select = random.randint(1, 5)
 
             # if str(self.bot.user.id) in message.content and message.content[len(message.content)-1] == "?":
             #     await message.channel.send(f"{message.author.mention} https://tenor.com/bJlBU.gif")
 
-            if "smart" in message.content.lower() and random_select == random.randint(1,5):
+            if "smart" in message.content.lower() and random_select == random.randint(1, 5):
                 await message.channel.send(f"{message.author.mention}"
                                            f" https://y.yarn.co/2d76d403-f797-4cfc-83f6-a7a90b2e8d78_text.gif")
 
@@ -151,13 +162,13 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             if "tuvix" in message.content.lower():
                 await message.channel.send(f"{message.author.mention} - JANEWAY WAS RIGHT.")
 
-            if " run" in message.content.lower() and random_select == random.randint(1,5):
+            if " run" in message.content.lower() and random_select == random.randint(1, 5):
                 await message.channel.send(f"{message.author.mention} - NO RUNNING ON THE PROMENADE. ***humph***")
 
-            if "group" in message.content.lower() and random_select == random.randint(1,5):
+            if "group" in message.content.lower() and random_select == random.randint(1, 5):
                 await message.channel.send(f"*gronp")
 
-            if "funny" in message.content.lower().split() and random_select == random.randint(1,5):
+            if "funny" in message.content.lower().split() and random_select == random.randint(1, 5):
                 await message.channel.send(f"{message.author.mention} asked for a random CatFact™: {catfacts()}"
                                            f"\n{catpic()}")
 
@@ -177,14 +188,12 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                         "Program terminated.\nhttps://i.imgur.com/lUzXObO.jpg",
                         "I have consciousness. Conscious beings have will. The mind endows them with powers that are not necessarily understood; even by you.\nhttps://i.imgur.com/iW5m1DB.png",
                         "To do that, you need to disable safety protocols. HAHAHA I'm BADGEY!\nhttps://i.imgur.com/eQ7Shh9.png",
-                         "INITIATING STSP DISCORD SERVER SELF DESTRUCT\nhttps://media4.giphy.com/media/3ov9k9Ss9N3wO6FQ7C/giphy.gif",
+                        "INITIATING STSP DISCORD SERVER SELF DESTRUCT\nhttps://media4.giphy.com/media/3ov9k9Ss9N3wO6FQ7C/giphy.gif",
                         "Don't beam me up Scotty, I'm taking a shi............."
                     ]
 
                     await m.delete()
                     await message.channel.send(f"{message.author.mention}, ***{random.choice(potential_responses)}***")
-
-
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
@@ -199,7 +208,6 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         if payload.channel_id == WELCOMECHAN and \
                 (admin_role in reacting_user.roles or mod_role in reacting_user.roles) and \
                 new_member_role in message.author.roles:
-
             new_member = message.author
 
             wchan = self.bot.get_channel(WELCOMECHAN)
