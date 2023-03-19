@@ -71,6 +71,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        syslog = self.bot.get_channel(SYSLOG)
 
         if message.author == self.bot.user:
             return
@@ -86,7 +87,6 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             # query = query.replace(',', '')
             try:
                 async with message.channel.typing():
-                    print(message.content)
                     # SUGGESTED BY CHATGPT to replace usernames in messages with the discord nickname -----
                     if '<@' in message.content:
                         # Loop through each user ID in the message
@@ -109,11 +109,13 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                                         if str(user_id) != str(self.bot.user.id):
                                             message.content = message.content.replace(f'<@{user_id}>', member.display_name)
                         except Exception as e:
-                            raise(e)
+                            await syslog.send(f"**BADGEY ERROR**\n```{e}```")
                     # ---------
                     query = message.content
                     print(query)
+
                     response = self.bot.chatbot.ask(convo_id=message.author.id, prompt=query)
+                    print(response)
                     # Check if the message is longer than 2000 characters
                     if len(response) > 1950:
                         # Split the message into chunks of 2000 characters or less
@@ -130,7 +132,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 pass
             except Exception as e:
                 await message.channel.send(f"{message.author.mention } https://tenor.com/bJlBU.gif")
-                await message.channel.send(f"```{e}```")
+                await syslog.send(f"**BADGEY ERROR**\n```{e}```")
 
         if message.channel.id not in EXCLUDE_FROM_BADGEY_RESPONSE:
             random_select = random.randint(1,5)

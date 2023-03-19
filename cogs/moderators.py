@@ -214,7 +214,7 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
             warns = "None"
         if timeouts == "":
             timeouts = "None"
-        embed.set_thumbnail(url=user.avatar_url)
+        embed.set_thumbnail(url=user.avatar.url)
         embed.add_field(name="Name", value=user.mention, inline=True)
         embed.add_field(name="Discord ID", value=user.id, inline=True)
         embed.add_field(name=f"Warns: **{warn_count}**", value=warns, inline=False)
