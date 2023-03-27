@@ -1,7 +1,9 @@
-import nextcord
+import nextcord as discord
 from nextcord.ext import commands, tasks
 from utils.config import *
 from nextcord.errors import HTTPException
+import json
+
 SUCCESS = '**`SUCCESS`**'
 ERROR = '**`ERROR`**'
 
@@ -80,10 +82,12 @@ class SysAdmin(commands.Cog, name="Bot admin commands"):
 
         for k, v in SELF_ASSIGN_ROLES.items():
             role = discord.utils.get(channel.guild.emojis, name=k)
+
+            print(k, v['rolename'])
             if role:
-                role_list += f"{role}: {v}\n"
+                role_list += f"{role}: `{v['rolename']}` - {v['description']}\n"
             else:
-                role_list += f"{k}: {v}\n"
+                role_list += f"{k}: `{v['rolename']}` - {v['description']}\n"
 
         role_message = f"{ROLES_CHANNEL_MESSAGE}\n{role_list}\n---------"
         msg = await channel.send(role_message)

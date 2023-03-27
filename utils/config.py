@@ -48,21 +48,62 @@ TIMEOUT_ROLE_NAME = "brig"
 
 EXCLUDE_FROM_BADGEY_RESPONSE = [946272022852419615, 954583313845219348]
 
-# For stock emojis, use the emoji. For custom ones, use the name
-SELF_ASSIGN_ROLES = {"horgahn": "Horga'hn",
-                    "⛔": "Spoilers",
-                    "sto": "STO Player",
-                    "masterchief": "Halo Player",
-                    "any":"Any Pronouns",
-                    "sheher":"She/Her",
-                    "hehim":"He/Him",
-                    "shethem":"She/Them",
-                    "hethem":"He/Them",
-                    "theythem":"They/Them",
-                    "askme":"Ask me my pronouns"}
+# # For stock emojis, use the emoji. For custom ones, use the name
+# SELF_ASSIGN_ROLES = {"horgahn": "Horga'hn",
+#                     "⛔": "Spoilers",
+#                     "sto": "STO Player",
+#                     "masterchief": "Halo Player",
+#                     "any":"Any Pronouns",
+#                     "sheher":"She/Her",
+#                     "hehim":"He/Him",
+#                     "shethem":"She/Them",
+#                     "hethem":"He/Them",
+#                     "theythem":"They/Them",
+#                     "askme":"Ask me my pronouns"}
 
-ROLES_CHANNEL_MESSAGE = f"Go ahead and self-assign some roles by clicking the reactions below this message:\n" \
-                        f"(`Horga'hn` gives you access to NSFW channels, for example)\n\n "
+# For stock emojis, use the emoji. For custom ones, use the name
+SELF_ASSIGN_ROLES = {"horgahn":
+                         {"rolename": "Horga'hn",
+                          "description": "Access to NSFW channels"},
+                     "⛔": {
+                         "rolename": "Spoilers",
+                         "description": "Access to spoilers channels, seperated by show"},
+                     "watchparty":
+                         {"rolename": "Watch Party",
+                          "description": "I'm interested in events/watch parties and want to be notified about them!"},
+                     "sto":
+                         {"rolename": "STO Player",
+                          "description": "I play Star Trek: Online and want to be pinged for group events!"},
+                     "masterchief":
+                         {"rolename": "Halo Player",
+                          "description": "I play Halo and want to be pinged for group events!"},
+                     "any":
+                          {"rolename": "Any pronouns",
+                           "description": "I use any pronouns"},
+                     "sheher":
+                         {"rolename": "She/Her",
+                          "description": "My pronouns are she/her"},
+                     "hehim":
+                         {"rolename": "He/Him",
+                          "description": "My pronouns are he/him"},
+                     "shethem":
+                         {"rolename": "She/Them",
+                          "description": "My pronouns are she/them"},
+                     "hethem":
+                         {"rolename": "He/Them",
+                          "description": "My pronouns are he/them"},
+                     "theythem":
+                         {"rolename": "They/Them",
+                          "description": "My pronouns are they/them"},
+                     "askme":
+                         {"rolename": "Ask me my pronouns",
+                          "description": "Please ask me my pronouns"}
+                     }
+
+
+ROLES_CHANNEL_MESSAGE = f"Go ahead and self-assign some roles by clicking the reactions below this message.\n" \
+                        f"(PRO TIP: If you wish to unassign, just un-react! If your react is missing due to the bot" \
+                        f" being reset or whatnot, just react, then un-react and the role will be removed.)"
 
 JOIN_MESSAGE = f"For protection against bots and spam, you're restricted to only talking in <#{WELCOMECHAN}>. " \
                f"Prove to us you're not an android (**Sorry Commander Data**) or Exocomp (**Fuck you, Peanut Hamper**) by saying hi," \

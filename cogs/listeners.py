@@ -228,7 +228,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 react = payload.emoji.name
             else:
                 react = payload.emoji
-            role = discord.utils.get(reacting_user.guild.roles, name=SELF_ASSIGN_ROLES[react])
+            role = discord.utils.get(reacting_user.guild.roles, name=SELF_ASSIGN_ROLES[react]['rolename'])
             await reacting_user.add_roles(role)
 
     @commands.Cog.listener()
@@ -245,7 +245,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 react = payload.emoji.name
             else:
                 react = payload.emoji
-            role = discord.utils.get(message.guild.roles, name=SELF_ASSIGN_ROLES[react])
+            role = discord.utils.get(message.guild.roles, name=SELF_ASSIGN_ROLES[react]['rolename'])
             await user.remove_roles(role)
 
     @commands.Cog.listener()
