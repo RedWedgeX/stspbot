@@ -217,6 +217,7 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
         embed.set_thumbnail(url=user.avatar.url)
         embed.add_field(name="Name", value=user.mention, inline=True)
         embed.add_field(name="Discord ID", value=user.id, inline=True)
+        embed.add_field(name="Joined", value=user.joined_at, inline=True)
         embed.add_field(name=f"Warns: **{warn_count}**", value=warns, inline=False)
         embed.add_field(name=f"Time Outs: **{timeout_count}**", value=timeouts, inline=False)
         embed.set_footer(text="!! indicates active timeout")
