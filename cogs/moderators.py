@@ -191,10 +191,10 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
             print(results)
             for record in results:
                 print(record)
-                type = record[2]
-                time = datetime.strptime(record[3], "%Y-%m-%d %H:%M:%S")
-                time = time.astimezone(az_timezone)
-                local_time = time.strftime("%m/%d %H:%M:%S")
+                action_type = record[2]
+                action_time = datetime.strptime(record[3], "%Y-%m-%d %H:%M:%S")
+                action_time = action_time.astimezone(az_timezone)
+                local_time = action_time.strftime("%m/%d %H:%M:%S")
                 reason = record[4]
                 active = record[6]
                 submitted_by = await self.bot.fetch_user(int(record[5]))
@@ -202,13 +202,15 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
                     a = ":bangbang:"
                 else:
                     a = ""
-                if type == NAUGHTY_TIMEOUT:
+                if action_type == NAUGHTY_TIMEOUT:
                     timeouts += f"{local_time} by {submitted_by} `{reason}`{a}\n"
                     timeout_count += 1
-                elif type == NAUGHTY_WARN:
+                elif action_type == NAUGHTY_WARN:
                     warns += f"{local_time} by {submitted_by} `{reason}`\n"
                     warn_count += 1
                 print(record[1])
+
+
 
         if warns == "":
             warns = "None"
@@ -217,11 +219,13 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
         embed.set_thumbnail(url=user.avatar.url)
         embed.add_field(name="Name", value=user.mention, inline=True)
         embed.add_field(name="Discord ID", value=user.id, inline=True)
-        embed.add_field(name="Joined", value=user.joined_at, inline=True)
+        embed.add_field(name="Joined", value=user.joined_at.strftime('%Y-%m-%d'), inline=True)
         embed.add_field(name=f"Warns: **{warn_count}**", value=warns, inline=False)
         embed.add_field(name=f"Time Outs: **{timeout_count}**", value=timeouts, inline=False)
         embed.set_footer(text="!! indicates active timeout")
         await ctx.send(content=f"ℹ information about **{user.name}**", embed=embed)
+        print(f"Time Format: {type(user.joined_at)}")
+
 
     # PURGE
     @commands.command()
