@@ -11,14 +11,6 @@ ERROR = '**`ERROR`**'
 class SysAdmin(commands.Cog, name="Bot admin commands"):
     def __init__(self, client):
         self.bot = client
-        self.healthcheck.start()
-
-    def cog_unload(self):
-        self.healthcheck.cancel()
-
-    @tasks.loop(minutes=2)
-    async def healthcheck(self):
-        requests.get("https://heartbeat.vuln.pw/ping/6992227f-ebff-47b5-8538-44d0608ba338")
 
     # Hidden means it won't show up on the default help.
     @commands.command(name='load', hidden=True)

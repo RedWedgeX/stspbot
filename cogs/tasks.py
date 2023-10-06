@@ -1,10 +1,10 @@
 import asyncio
 from datetime import datetime
-
+import socket
+import urllib.request
 import aiosqlite
 import nextcord as discord
 from nextcord.ext import tasks, commands
-from revChatGPT.V1 import Chatbot
 from utils.config import *
 
 
@@ -12,21 +12,21 @@ class Tasks(commands.Cog, name="Automatic Tasks"):
     def __init__(self, client):
         self.bot = client
         self.check_timeouts.start()
+        self.healthcheck.start()
+
 
     def cog_unload(self):
         self.check_timeouts.cancel()
+        self.healthcheck.cancel()
 
-    @tasks.loop(hours=5)
-    async def pop_cgtp_conversations(self):
-        CHATGPT_CONFIG = {"access_token": CGPT_TOKEN}
-        chatbot = Chatbot(config=CHATGPT_CONFIG)
-
-        for userid in CONVERSATIONS:
-            if userid['last_updated'] < datetime.datetime.now()-datetime.timedelta(hours=1):
-                "foo"
-                chatbot.delete_conversation(userid['conversation'])
-
-
+    @tasks.loop(minutes=2)
+    async def healthcheck(self):
+        try:
+            urllib.request.urlopen("https://heartbeat.vuln.pw/ping/6992227f-ebff-47b5-8538-44d0608ba338", timeout=10)
+        except socket.error as e:
+            # Log ping failure here...
+            modlog_channel = self.bot.get_channel(SYSLOG)
+            await modlog_channel.send("Heartbeat Ping failed:\n ```%s```" % e)
 
     @tasks.loop(minutes=5)
     async def check_timeouts(self):
