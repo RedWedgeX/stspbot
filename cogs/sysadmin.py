@@ -18,7 +18,6 @@ class SysAdmin(commands.Cog, name="Bot admin commands"):
 
     @tasks.loop(minutes=2)
     async def healthcheck(self):
-        "foo"
         requests.get("https://heartbeat.vuln.pw/ping/6992227f-ebff-47b5-8538-44d0608ba338")
 
     # Hidden means it won't show up on the default help.
