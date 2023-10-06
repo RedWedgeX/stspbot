@@ -3,5 +3,6 @@ requests
 pytz
 aiosqlite
 ffmpeg
+tiktoken
 revChatGPT
 nextcord

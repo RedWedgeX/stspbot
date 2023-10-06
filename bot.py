@@ -59,7 +59,7 @@ async def on_ready():
     # Changes our bots Playing Status. type=1(streaming) for a standard game you could remove type and url.
     await bot.change_presence(
         activity=discord.Streaming(name='Dom Jot', url='https://www.facebook.com/groups/1477972915840370'))
-    bot.chatbot = Chatbot(api_key=os.environ['CHATGPT_API'], system_prompt=CGPT_PROMPT, engine="gpt-4-32k-0613")
+    bot.chatbot = Chatbot(api_key=os.environ['CHATGPT_API'], system_prompt=CGPT_PROMPT, engine="gpt-4")
     bot.cgpt_enabled = True
     print(f'Successfully logged in and booted...!')
 

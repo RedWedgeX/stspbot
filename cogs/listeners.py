@@ -106,9 +106,8 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                         await syslog.send(f"**BADGEY ERROR**\n```{e}```")
                 # ---------
                 query = message.content
-                print(query)
 
-                response = self.bot.chatbot.ask(convo_id=message.author.id, prompt=query)
+                response = await self.bot.chatbot.ask_async(convo_id=message.author.id, prompt=query)
                 print(response)
                 # Check if the message is longer than 2000 characters
                 if len(response) > 1950:
@@ -126,6 +125,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             pass
         except Exception as e:
             await message.channel.send(f"{message.author.mention} https://tenor.com/bJlBU.gif")
+            print(e)
             await syslog.send(f"**BADGEY ERROR**\n```{e}```")
 
     @commands.Cog.listener()
