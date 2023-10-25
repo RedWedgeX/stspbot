@@ -97,15 +97,18 @@ SELF_ASSIGN_ROLES = {"horgahn":
                      "theythem":
                          {"rolename": "They/Them",
                           "description": "My pronouns are they/them"},
+                     "itit":
+                         {"rolename": "It/It",
+                          "description": "My pronouns are it/it"},
                      "askme":
                          {"rolename": "Ask me my pronouns",
                           "description": "Please ask me my pronouns"}
                      }
 
 
-ROLES_CHANNEL_MESSAGE = f"Go ahead and self-assign some roles by clicking the reactions below this message.\n" \
+ROLES_CHANNEL_MESSAGE = f"Go ahead and self-assign some roles by clicking the reactions below this message.\n\n" \
                         f"(PRO TIP: If you wish to unassign, just un-react! If your react is missing due to the bot" \
-                        f" being reset or whatnot, just react, then un-react and the role will be removed.)"
+                        f" being reset or whatnot, just react, then un-react and the role will be removed.)\n\n"
 
 JOIN_MESSAGE = f"For protection against bots and spam, you're restricted to only talking in <#{WELCOMECHAN}>. " \
                f"Prove to us you're not an android (**Sorry Commander Data**) or Exocomp (**Fuck you, Peanut Hamper**) by saying hi," \
