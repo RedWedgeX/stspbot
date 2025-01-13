@@ -127,6 +127,8 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                                 await message.channel.send(f"{chunk}")
                             else:
                                 await message.channel.send(f"{chunk}")
+                    else:
+                        await message.channel.send(f"{response}")
 
 
             except CommandNotFound as er:
@@ -328,10 +330,9 @@ async def add_chat_history(user_id, role, parts):
 async def load_chat_history_for_user(user_id):
     async with aiosqlite.connect(DB_PATH) as db:
         rows = await db.execute_fetchall(
-            f"SELECT role, parts FROM chat_history WHERE user_id = {int(user_id)} ORDER BY timestamp")
+            "SELECT role, parts FROM chat_history WHERE user_id = ? ORDER BY timestamp", (int(user_id),))
         results_as_dicts = [{"role": entry[0], "parts": entry[1]} for entry in rows]
         return results_as_dicts
-
 
 def setup(client):
     client.add_cog(Listeners(client))
