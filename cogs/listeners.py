@@ -116,6 +116,17 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                             await syslog.send(f"**BADGEY ERROR**\n```{e}```")
                     # ---------
                     response = await self.gemini(message, message.author, query)
+                    # Check if the message is longer than 2000 characters
+                    if len(response) > 1950:
+                        # Split the message into chunks of 2000 characters or less
+                        chunks = [response[i:i + 1950] for i in range(0, len(response), 1950)]
+
+                        # Send each chunk as a separate message
+                        for chunk in chunks:
+                            if chunks.index(chunk) == 0:
+                                await message.channel.send(f"{chunk}")
+                            else:
+                                await message.channel.send(f"{chunk}")
                     await message.channel.send(response)
 
 
