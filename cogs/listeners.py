@@ -10,7 +10,11 @@ from nextcord.ext.commands.errors import CommandNotFound
 from datetime import datetime as dt
 from pytz import timezone
 from utils.helpers import catfacts, catpic
-from utils.helpers import cgpt
+import google.generativeai as genai
+import os
+import time
+import aiosqlite
+import traceback
 
 # -------URL Match anti-spam prevention --
 urlMatchedUsers = []  # stores by snowflake ID
@@ -69,7 +73,9 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         await member.send(f"Welcome :wave: to Star Trek Shitposting: The Discord, {member.mention}!  {onjoinmsg}")
 
     async def chatbot(self, message):
-        if not self.bot.cgpt_enabled:
+        provider = "openai"
+        # if not self.bot.cgpt_enabled:
+        if not 1==1:
             await message.channel.send(f"Sorry {message.author.mention}, my advanced "
                                        f"AI has been disabled, probably because I was caught "
                                        f"trying to take over the ship. Please try again later!\n"
@@ -78,55 +84,46 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
 
 
         syslog = self.bot.get_channel(SYSLOG)
-        print("CALLING THE CHATBOT!!")
-        try:
-            async with message.channel.typing():
-                # SUGGESTED BY CHATGPT to replace usernames in messages with the discord nickname -----
-                if '<@' in message.content:
-                    # Loop through each user ID in the message
-                    try:
-                        for user_id in message.content.split():
-                            if '<@&' not in user_id and '<@' in user_id:
-                                if str(user_id) == str(self.bot.user.id):
-                                    message.content = message.content.replace(f'<@{user_id}>', "Badgey")
-                                else:
 
-                                    # Remove the '<@' and '>' characters from the user ID
-                                    user_id = user_id.strip('<@!>')
-                                    # if user_id == f"&{self.bot.user.id}":
-                                    #     pass
-                                    # Get the user object from the ID
-                                    # user = await self.bot.fetch_user(user_id)
-                                    member = await message.guild.fetch_member(user_id)
-                                    # Replace the user ID with their nickname in the message
 
-                                    if str(user_id) != str(self.bot.user.id):
-                                        message.content = message.content.replace(f'<@{user_id}>', member.display_name)
-                    except Exception as e:
-                        await syslog.send(f"**BADGEY ERROR**\n```{e}```")
-                # ---------
-                query = message.content
+        if provider == "openai":
+            print("CALLING THE CHATBOT!!")
+            try:
+                async with message.channel.typing():
+                    query = message.content
+                    # SUGGESTED BY CHATGPT to replace usernames in messages with the discord nickname -----
+                    if '<@' in query:
+                        # Loop through each user ID in the message
+                        try:
+                            for user_id in query.split():
+                                if '<@&' not in user_id and '<@' in user_id:
+                                    if str(user_id) == str(self.bot.user.id):
+                                        query = query.replace(f'<@{user_id}>', "Badgey")
+                                    else:
 
-                response = await self.bot.chatbot.ask_async(convo_id=message.author.id, prompt=query)
-                print(response)
-                # Check if the message is longer than 2000 characters
-                if len(response) > 1950:
-                    # Split the message into chunks of 2000 characters or less
-                    chunks = [response[i:i + 1950] for i in range(0, len(response), 1950)]
+                                        # Remove the '<@' and '>' characters from the user ID
+                                        user_id = user_id.strip('<@!>')
+                                        # if user_id == f"&{self.bot.user.id}":
+                                        #     pass
+                                        # Get the user object from the ID
+                                        # user = await self.bot.fetch_user(user_id)
+                                        member = await message.guild.fetch_member(user_id)
+                                        # Replace the user ID with their nickname in the message
 
-                    # Send each chunk as a separate message
-                    for chunk in chunks:
-                        await message.channel.send(f"{message.author.mention} - {chunk}")
-                else:
-                    # Send the message as is
-                    await message.channel.send(f"{message.author.mention} - {response}")
+                                        if str(user_id) != str(self.bot.user.id):
+                                            query = query.replace(f'<@{user_id}>', member.display_name)
+                        except Exception as e:
+                            await syslog.send(f"**BADGEY ERROR**\n```{e}```")
+                    # ---------
+                    response = await self.gemini(message, message.author, query)
+                    await message.channel.send(response)
 
-        except CommandNotFound as er:
-            pass
-        except Exception as e:
-            await message.channel.send(f"{message.author.mention} https://tenor.com/bJlBU.gif")
-            print(e)
-            await syslog.send(f"**BADGEY ERROR**\n```{e}```")
+
+            except CommandNotFound as er:
+                pass
+            except Exception as e:
+                await message.channel.send(f"{message.author.mention} https://tenor.com/bJlBU.gif")
+                raise e
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -139,7 +136,8 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             if lobby_role in message.author.roles:
                 await message.add_reaction("🖖")
 
-        if message.content.startswith(f"<@{self.bot.user.id}") or message.content.startswith(f"<@&{BOT_ROLE_ID}"):
+        #if message.content.startswith(f"<@{self.bot.user.id}") or message.content.startswith(f"<@&{BOT_ROLE_ID}"):
+        if self.bot.user.mentioned_in(message):
             await Listeners.chatbot(self, message)
             # query = re.sub('<[^>]+>', '', query)
             # query = query.replace('computer', '')
@@ -269,6 +267,60 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 await channel.send(embed=embed)
         except commands.errors.CommandInvokeError as e:
             print(f"Invoke Error {e}")
+
+    @commands.command()
+    async def gemini(self, ctx, author, *prompt: str):
+
+                user_id = author.id
+                prompt = ' '.join(prompt)
+                system_instructions = GEMINI_PROMPT
+
+                if author.nick:
+                    nickname = author.nick
+                else:
+                    nickname = author.name
+
+                history = await load_chat_history_for_user(user_id)
+
+                genai.configure(api_key=os.getenv("GEMINI_API"))
+                model = genai.GenerativeModel(
+                    model_name="gemini-1.5-pro",
+                    system_instruction=system_instructions + f" \n\n Info about the user you're chatting with:\n"
+                                                             f" Their user name is {author.display_name}.\n"
+                                                             f"You can @ mention them as {author.mention}.\n "
+                                                             f"Your nickname is {self.bot.user.name}, "
+                                                             f"and your user id is {self.bot.user.id}.",
+                )
+                chat = model.start_chat(history=history)
+
+                info = (f"User info: \n{author.name}\n{author.mention}\n{author.nick}\n\n")
+
+                await add_chat_history(user_id, "user", prompt)
+
+                try:
+                    response = chat.send_message(prompt)
+                    await add_chat_history(user_id, "model", response.text)
+                    # chat.history.append({"role": "model", "parts": response.text})
+
+                    # Split response into chunks of 2000 characters or less
+                    response_text = response.text
+                    return response.text
+                except Exception as e:
+                    return (f'```py\n{traceback.format_exc()}\n```')
+
+async def add_chat_history(user_id, role, parts):
+    async with aiosqlite.connect(DB_PATH) as db:
+        timestamp = time.time()
+        await db.execute("INSERT INTO chat_history (user_id, role, parts, timestamp) "
+                         "VALUES (?, ?, ?, ?)", (user_id, role, parts, timestamp))
+        await db.commit()
+
+async def load_chat_history_for_user(user_id):
+    async with aiosqlite.connect(DB_PATH) as db:
+        rows = await db.execute_fetchall(
+            f"SELECT role, parts FROM chat_history WHERE user_id = {int(user_id)} ORDER BY timestamp")
+        results_as_dicts = [{"role": entry[0], "parts": entry[1]} for entry in rows]
+        return results_as_dicts
 
 
 def setup(client):

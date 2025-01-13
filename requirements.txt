@@ -6,3 +6,4 @@ ffmpeg
 tiktoken
 revChatGPT
 nextcord
+google-generativeai
