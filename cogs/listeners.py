@@ -149,7 +149,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             # if str(self.bot.user.id) in message.content and message.content[len(message.content)-1] == "?":
             #     await message.channel.send(f"{message.author.mention} https://tenor.com/bJlBU.gif")
 
-            if "smart" in message.content.lower() and random_select == random.randint(1, 5):
+            if "smart" in message.content.lower() and random_select == random.randint(1, 10):
                 await message.channel.send(f"{message.author.mention}"
                                            f" https://y.yarn.co/2d76d403-f797-4cfc-83f6-a7a90b2e8d78_text.gif")
 
@@ -160,13 +160,13 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             if "tuvix" in message.content.lower():
                 await message.channel.send(f"{message.author.mention} - JANEWAY WAS RIGHT.")
 
-            if " run" in message.content.lower() and random_select == random.randint(1, 5):
+            if " run" in message.content.lower() and random_select == random.randint(1, 10):
                 await message.channel.send(f"{message.author.mention} - NO RUNNING ON THE PROMENADE. ***humph***")
 
-            if "group" in message.content.lower() and random_select == random.randint(1, 5):
+            if "group" in message.content.lower() and random_select == random.randint(1, 10):
                 await message.channel.send(f"*gronp")
 
-            if "funny" in message.content.lower().split() and random_select == random.randint(1, 5):
+            if "covid" in message.content.lower().split() and random_select == random.randint(1, 10):
                 await message.channel.send(f"{message.author.mention} asked for a random CatFact™: {catfacts()}"
                                            f"\n{catpic()}")
 
