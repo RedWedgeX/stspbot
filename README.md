@@ -12,4 +12,3 @@
 ## How does it work?
 - It's a Bot based on Discord.py library
 - It needs an environmental variable called `TOKEN` with the Discord bot token
-

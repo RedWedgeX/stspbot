@@ -57,7 +57,6 @@ def catpic():
 
 
 
-
 def remove_non_ascii(s):
     """Remove non-ASCII characters from a Unicode string. Removes @ (at symbol, decimal
     64) which pings discord users/roles. Also removes ` (grave accent, decimal 96) which
