@@ -143,7 +143,7 @@ ROLES_CHANNEL_MESSAGE = f"Go ahead and self-assign some roles by clicking the re
 
 JOIN_MESSAGE = f"For protection against bots and spam, you're restricted to only talking in <#{WELCOMECHAN}>. " \
                f"Prove to us you're not an android (**Sorry Commander Data**) or Exocomp (**Fuck you, Peanut Hamper**) by saying hi," \
-               f" introducing yourself and tell us your least favorite Trek character, and our mods will " \
+               f" introducing yourself, and telling us your least favorite Trek character, and our mods will " \
                f"let you in!"
 
 # -------URL Match information message used in listeners.py---
