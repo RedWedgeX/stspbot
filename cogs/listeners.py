@@ -166,8 +166,8 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
             if "group" in message.content.lower() and random_select == random.randint(1, 10):
                 await message.channel.send(f"*gronp")
 
-            if "covid" in message.content.lower().split() and random_select == random.randint(1, 10):
-                await message.channel.send(f"{message.author.mention} asked for a random CatFact™: {catfacts()}"
+            if "funny" in message.content.lower().split() and random_select == random.randint(1, 10):
+                await message.channel.send(f"{message.author.mention} asked for a random CatPic™: \n"
                                            f"\n{catpic()}")
 
             if "end program" in message.content.lower():
