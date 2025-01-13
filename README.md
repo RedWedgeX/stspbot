@@ -6,7 +6,7 @@
 - It was built for Star Trek Shitposting's Discord Server!
 - It manages:
     - #welcome channel handling
-    - Self-assigning roles (TODO)
+    - Self-assigning roles (TODO)  
     
 
 ## How does it work?
