@@ -93,7 +93,7 @@ staff = "Admin"
 mods = "Mod"
 TIMEOUT_ROLE_NAME = "brig"
 
-EXCLUDE_FROM_BADGEY_RESPONSE = [946272022852419615, 954583313845219348]
+EXCLUDE_FROM_BADGEY_RESPONSE = [946272022852419615, 954583313845219348, WELCOMECHAN]
 
 # # For stock emojis, use the emoji. For custom ones, use the name
 # SELF_ASSIGN_ROLES = {"horgahn": "Horga'hn",
