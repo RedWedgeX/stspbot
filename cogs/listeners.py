@@ -149,7 +149,7 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 await message.add_reaction("🖖")
 
         #if message.content.startswith(f"<@{self.bot.user.id}") or message.content.startswith(f"<@&{BOT_ROLE_ID}"):
-        if self.bot.user.mentioned_in(message):
+        if self.bot.user.mentioned_in(message) and message.channel.id not in EXCLUDE_FROM_BADGEY_RESPONSE:
             await Listeners.chatbot(self, message)
             # query = re.sub('<[^>]+>', '', query)
             # query = query.replace('computer', '')
