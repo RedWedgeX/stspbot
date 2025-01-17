@@ -210,6 +210,8 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
         warn_count = 0
         timeouts = ""
         timeout_count = 0
+        notes = ""
+        notes_count = 0
 
         async with aiosqlite.connect(DB_PATH) as db:
             results = await db.execute_fetchall(f"SELECT * FROM naughtylist WHERE discord_id = {int(user.id)}")
@@ -233,6 +235,9 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
                 elif action_type == NAUGHTY_WARN:
                     warns += f"{local_time} by {submitted_by} `{reason}`\n"
                     warn_count += 1
+                elif action_type == NAUGHTY_NOTE:
+                    notes += f"{local_time} by {submitted_by} `{reason}`\n"
+                    notes_count += 1
                 print(record[1])
 
 
@@ -241,10 +246,13 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
             warns = "None"
         if timeouts == "":
             timeouts = "None"
+        if notes  == "":
+            notes = "None"
         embed.set_thumbnail(url=user.avatar.url)
         embed.add_field(name="Name", value=user.mention, inline=True)
         embed.add_field(name="Discord ID", value=user.id, inline=True)
         embed.add_field(name="Joined", value=user.joined_at.strftime('%Y-%m-%d'), inline=True)
+        embed.add_field(name=f"Notes: **{notes_count}**", value=notes, inline=False)
         embed.add_field(name=f"Warns: **{warn_count}**", value=warns, inline=False)
         embed.add_field(name=f"Time Outs: **{timeout_count}**", value=timeouts, inline=False)
         embed.set_footer(text="!! indicates active timeout")
