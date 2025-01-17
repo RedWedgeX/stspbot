@@ -190,6 +190,7 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
         await ctx.message.delete()
         await channel.send(f"A note has been added to {user.mention}'s file by {ctx.message.author.mention}. "
                            f"\nNote: {reason}")
+        await ctx.send(f"Note added to {user.mention}'s file.")
 
         # Add the action to the database
         async with aiosqlite.connect(DB_PATH) as db:
