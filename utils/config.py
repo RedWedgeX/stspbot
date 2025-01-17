@@ -95,18 +95,6 @@ TIMEOUT_ROLE_NAME = "brig"
 
 EXCLUDE_FROM_BADGEY_RESPONSE = [946272022852419615, 954583313845219348, WELCOMECHAN]
 
-# # For stock emojis, use the emoji. For custom ones, use the name
-# SELF_ASSIGN_ROLES = {"horgahn": "Horga'hn",
-#                     "⛔": "Spoilers",
-#                     "sto": "STO Player",
-#                     "masterchief": "Halo Player",
-#                     "any":"Any Pronouns",
-#                     "sheher":"She/Her",
-#                     "hehim":"He/Him",
-#                     "shethem":"She/Them",
-#                     "hethem":"He/Them",
-#                     "theythem":"They/Them",
-#                     "askme":"Ask me my pronouns"}
 
 # For stock emojis, use the emoji. For custom ones, use the name
 SELF_ASSIGN_ROLES = {"horgahn":
@@ -142,6 +130,12 @@ SELF_ASSIGN_ROLES = {"horgahn":
                      "theythem":
                          {"rolename": "They/Them",
                           "description": "My pronouns are they/them"},
+                     "heit":
+                         {"rolename": "He/It",
+                          "description": "My pronouns are he/it"},
+                     "sheit":
+                         {"rolename": "She/It",
+                          "description": "My pronouns are She/it"},
                      "itit":
                          {"rolename": "It/It",
                           "description": "My pronouns are it/it"},
