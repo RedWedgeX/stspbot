@@ -167,4 +167,5 @@ urlMatchMsg = ('Hey, <@{}>, it looks like you\'re trying to send a link!\n'
 # Naughtylist types
 NAUGHTY_TIMEOUT = "timeout"
 NAUGHTY_WARN = "warning"
+NAUGHTY_NOTE = "note"
 TIMEOUT_MINUTES = 60

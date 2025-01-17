@@ -175,6 +175,31 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
 
             await db.commit()
 
+
+    # WARN
+    @commands.command()
+    @commands.has_any_role(staff, mods)
+    async def note(self, ctx, user: discord.Member, *reason: str):
+        """ - Adds a note to a member's file"""
+        if not reason:
+            ctx.send(f"Please specify the note.\n Format: `!note @user <note>`")
+        else:
+            reason = ' '.join(reason)
+        reason = remove_non_ascii(reason)
+        channel = self.bot.get_channel(MOD_ACTIONS_CHANNEL_ID)
+        await ctx.message.delete()
+        await channel.send(f"A note has been added to {user.mention}'s file by {ctx.message.author.mention}. "
+                           f"\nNote: {reason}")
+
+        # Add the action to the database
+        async with aiosqlite.connect(DB_PATH) as db:
+            TIMESTAMP = datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+            sqlquery = """INSERT INTO naughtylist(discord_id, type, time, reason, by, active) VALUES (?,?,?,?,?, 0)"""
+            await db.execute(sqlquery, (user.id, NAUGHTY_NOTE, TIMESTAMP, reason, ctx.message.author.id))
+            await db.commit()
+
+
+
     # USER
     @commands.command(name='user_info', aliases=['user', 'info', 'userinfo', 'luser'])
     @commands.has_any_role(staff, mods)
