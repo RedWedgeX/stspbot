@@ -29,7 +29,9 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]'):latest
+          tags: ghcr.io/${{ github.repository_owner }}/${{ env.REPO_LOWER }}:latest
+        env:
+          REPO_LOWER: ${{ env.GITHUB_REPOSITORY }}
 
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
@@ -48,16 +50,17 @@ jobs:
             TOKEN=$(pvesh get /access/token --output-format json | jq -r '.data[] | select(.userid == "${{ secrets.API_TOKEN_ID }}") | .tokenid')
 
             # Pull the latest image
-            docker pull ghcr.io/${{ github.repository_owner }}/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]'):latest
+            docker pull ghcr.io/${{ github.repository_owner }}/${{ env.REPO_LOWER }}:latest
 
             # Stop and remove the currently running container
             docker stop badgey-app || true
             docker rm badgey-app || true
 
             # Run the new container
-            docker run -d --restart=always --name badgey-app -v /opt/badgey/data/db.sqlite:/usr/src/app/db/db.sqlite -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/${{ github.repository_owner }}/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]'):latest
+            docker run -d --restart=always --name badgey-app -v /opt/badgey/data/db.sqlite:/usr/src/app/db/db.sqlite -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/${{ github.repository_owner }}/${{ env.REPO_LOWER }}:latest
 
           EOF
         env:
           GEMINI_API: ${{ secrets.GEMINI_API }}
           TOKEN: ${{ secrets.TOKEN }}
+          REPO_LOWER: ${{ github.repository }}
