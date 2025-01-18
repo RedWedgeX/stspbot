@@ -29,7 +29,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/redwedgex/badgey:latest
+          tags: ghcr.io/${{ github.repository }}/my-app:latest
 
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
@@ -40,38 +40,22 @@ jobs:
       - name: Deploy to Proxmox
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            # Install jq (for parsing API responses)
+            sudo apt update
+            sudo apt install jq -y
+            
             # Get API Token
             TOKEN=$(pvesh get /access/token --output-format json | jq -r '.data[] | select(.userid == "${{ secrets.API_TOKEN_ID }}") | .tokenid')
 
-            # Stop and destroy any existing container
-            qm stop 900 || true
-            qm destroy 900 || true
+            # Pull the latest image 
+            docker pull ghcr.io/redwedgex/badgey:latest
 
-            # Create a new container from template
-            qm create 900 --clone ${{ secrets.TEMPLATE_ID }} --name badgey --net0 virtio,bridge=vmbr1,ip=10.10.10.20/24
-            qm set 900 --description "Updated by GitHub Actions: \$(date)"
+            # Stop and remove the currently running container
+            docker stop badgey-app || true
+            docker rm badgey-app || true
 
-            # Bind mount the database file to the correct location in the container
-            qm set 900 --hostpci0 /opt/badgey/data/db.sqlite,/usr/src/app/db/db.sqlite
-
-            # Set environment variables
-            qm set 900 --env GEMINI_API=${GEMINI_API},TOKEN=${TOKEN}
-
-            # Start the container
-            qm start 900
-
-            # Wait for the container to be ready
-            sleep 30
-
-            # Pull the latest image and run it in the container
-            curl -k -s -X POST \
-            https://${{ secrets.SSH_HOST }}:8006/api2/json/nodes/razor/lxc/900/execute \
-            -H "Authorization: PVEAPIToken=${{ secrets.API_TOKEN_ID }}=${TOKEN}" \
-            -d command="docker" \
-            -d command="pull" \
-            -d command="ghcr.io/redwedgex/badgey:latest"
-
-            qm exec 900 docker run -d --restart=always --name badgey-app ghcr.io/redwedgex/badgey:latest
+            # Run the new container
+            docker run -d --restart=always --name badgey-app -v /opt/badgey/data/db.sqlite:/usr/src/app/db/db.sqlite -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/redwedgex/badgey:latest
 
           EOF
         env:
