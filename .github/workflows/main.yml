@@ -23,13 +23,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set lowercase repo name variable
+        run: echo "LOWERCASE_REPO_NAME=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/stspbot:latest
+          tags: ghcr.io/${{ github.repository_owner }}/${{ env.LOWERCASE_REPO_NAME }}:latest
 
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
@@ -43,19 +46,19 @@ jobs:
             # Install jq (for parsing API responses)
             sudo apt update
             sudo apt install jq -y
-            
+
             # Get API Token
             TOKEN=$(pvesh get /access/token --output-format json | jq -r '.data[] | select(.userid == "${{ secrets.API_TOKEN_ID }}") | .tokenid')
 
             # Pull the latest image
-            docker pull ghcr.io/${{ github.repository_owner }}/stspbot:latest
+            docker pull ghcr.io/${{ github.repository_owner }}/${{ env.LOWERCASE_REPO_NAME }}:latest
 
             # Stop and remove the currently running container
             docker stop badgey-app || true
             docker rm badgey-app || true
 
             # Run the new container
-            docker run -d --restart=always --name badgey-app -v /opt/badgey/data/db.sqlite:/usr/src/app/db/db.sqlite -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/${{ github.repository_owner }}/stspbot:latest
+            docker run -d --restart=always --name badgey-app -v /opt/badgey/data/db.sqlite:/usr/src/app/db/db.sqlite -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/${{ github.repository_owner }}/${{ env.LOWERCASE_REPO_NAME }}:latest
 
           EOF
         env:
