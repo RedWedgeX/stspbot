@@ -45,16 +45,14 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             # Install jq (for parsing API responses)
-            sudo apt update
-            sudo apt install jq -y
+            # apt update
+            # apt install jq -y
 
             # Get API Token Secret
             TOKEN_SECRET=$(pvesh get /access/token --output-format json | jq -r '.data[] | select(.userid == "${{ secrets.API_TOKEN_ID }}") | .tokenid')
 
             # Create a new container from the template
             qm create ${{ secrets.VM_ID }} --clone ${{ secrets.TEMPLATE_ID }} --name badgey --net0 virtio,bridge=vmbr1,ip=10.10.10.20/24
-
-            # Add a description to the container
             qm set ${{ secrets.VM_ID }} --description "Updated by GitHub Actions: \$(date)"
 
             # Bind mount the database file into the container
