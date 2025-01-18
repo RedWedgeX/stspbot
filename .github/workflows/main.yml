@@ -1,4 +1,4 @@
-name: Build and Deploy Docker Image
+name: Build and Push Docker Image
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,34 +33,3 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/${{ env.LOWERCASE_REPO_NAME }}:latest
-
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
-
-      - name: Deploy to Proxmox
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            # Install jq (for parsing API responses)
-            sudo apt update
-            sudo apt install jq -y
-
-            # Get API Token
-            TOKEN=$(pvesh get /access/token --output-format json | jq -r '.data[] | select(.userid == "${{ secrets.API_TOKEN_ID }}") | .tokenid')
-
-            # Pull the latest image
-            docker pull ghcr.io/${{ github.repository_owner }}/${{ env.LOWERCASE_REPO_NAME }}:latest
-
-            # Stop and remove the currently running container
-            docker stop badgey-app || true
-            docker rm badgey-app || true
-
-            # Run the new container
-            docker run -d --restart=always --name badgey-app -v /opt/badgey/data/db.sqlite:/usr/src/app/db/db.sqlite -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/${{ github.repository_owner }}/${{ env.LOWERCASE_REPO_NAME }}:latest
-
-          EOF
-        env:
-          GEMINI_API: ${{ secrets.GEMINI_API }}
-          TOKEN: ${{ secrets.TOKEN }}
