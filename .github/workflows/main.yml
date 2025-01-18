@@ -48,18 +48,69 @@ jobs:
             sudo apt update
             sudo apt install jq -y
 
-            # Get API Token
-            TOKEN=$(pvesh get /access/token --output-format json | jq -r '.data[] | select(.userid == "${{ secrets.API_TOKEN_ID }}") | .tokenid')
+            # Get API Token Secret
+            TOKEN_SECRET=$(pvesh get /access/token --output-format json | jq -r '.data[] | select(.userid == "${{ secrets.API_TOKEN_ID }}") | .tokenid')
 
-            # Pull the latest image
-            docker pull ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
+            # Create a new container from the template
+            qm create ${{ secrets.VM_ID }} --clone ${{ secrets.TEMPLATE_ID }} --name badgey --net0 virtio,bridge=vmbr1,ip=10.10.10.20/24
 
-            # Stop and remove the currently running container
-            docker stop badgey-app || true
-            docker rm badgey-app || true
+            # Add a description to the container
+            qm set ${{ secrets.VM_ID }} --description "Updated by GitHub Actions: \$(date)"
 
-            # Run the new container
-            docker run -d --restart=always --name badgey-app -v /opt/badgey/data/db.sqlite:/usr/src/app/db/db.sqlite -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
+            # Bind mount the database file into the container
+            qm set ${{ secrets.VM_ID }} --hostpci0 /opt/badgey/data/db.sqlite,/usr/src/app/db/db.sqlite
+
+            # Set environment variables for the container
+            qm set ${{ secrets.VM_ID }} --env GEMINI_API=${{ env.GEMINI_API }} --env TOKEN=${{ env.TOKEN }}
+
+            # Start the container
+            qm start ${{ secrets.VM_ID }}
+
+            # Wait for container to boot
+            sleep 30
+
+            # Execute commands inside the container using the Proxmox API
+            # Pull the Docker image
+            curl -s -k -X POST \
+              -H "Authorization: PVEAPIToken=${{ secrets.API_TOKEN_ID }}=${TOKEN_SECRET}" \
+              https://${{ secrets.SSH_HOST }}:8006/api2/json/nodes/razor/lxc/${{ secrets.VM_ID }}/execute \
+              -d command="docker" \
+              -d command="pull" \
+              -d command="ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest"
+
+            # Stop the running Docker container (if any)
+            curl -s -k -X POST \
+              -H "Authorization: PVEAPIToken=${{ secrets.API_TOKEN_ID }}=${TOKEN_SECRET}" \
+              https://${{ secrets.SSH_HOST }}:8006/api2/json/nodes/razor/lxc/${{ secrets.VM_ID }}/execute \
+              -d command="docker" \
+              -d command="stop" \
+              -d command="badgey-app"
+
+            # Remove the stopped Docker container (if any)
+            curl -s -k -X POST \
+              -H "Authorization: PVEAPIToken=${{ secrets.API_TOKEN_ID }}=${TOKEN_SECRET}" \
+              https://${{ secrets.SSH_HOST }}:8006/api2/json/nodes/razor/lxc/${{ secrets.VM_ID }}/execute \
+              -d command="docker" \
+              -d command="rm" \
+              -d command="badgey-app"
+
+            # Run the new Docker container
+            curl -s -k -X POST \
+              -H "Authorization: PVEAPIToken=${{ secrets.API_TOKEN_ID }}=${TOKEN_SECRET}" \
+              https://${{ secrets.SSH_HOST }}:8006/api2/json/nodes/razor/lxc/${{ secrets.VM_ID }}/execute \
+              -d command="docker" \
+              -d command="run" \
+              -d command="-d" \
+              -d command="--restart=always" \
+              -d command="--name" \
+              -d command="badgey-app" \
+              -d command="-v" \
+              -d command="/usr/src/app/db/db.sqlite:/usr/src/app/db/db.sqlite" \
+              -d command="-e" \
+              -d command="GEMINI_API=${{ env.GEMINI_API }}" \
+              -d command="-e" \
+              -d command="TOKEN=${{ env.TOKEN }}" \
+              -d command="ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest"
 
           EOF
         env:
