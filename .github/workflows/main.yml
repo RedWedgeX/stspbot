@@ -29,7 +29,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}/my-app:latest
+          tags: ghcr.io/${{ github.repository_owner }}/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]'):latest
 
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
@@ -47,15 +47,15 @@ jobs:
             # Get API Token
             TOKEN=$(pvesh get /access/token --output-format json | jq -r '.data[] | select(.userid == "${{ secrets.API_TOKEN_ID }}") | .tokenid')
 
-            # Pull the latest image 
-            docker pull ghcr.io/redwedgex/badgey:latest
+            # Pull the latest image
+            docker pull ghcr.io/${{ github.repository_owner }}/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]'):latest
 
             # Stop and remove the currently running container
             docker stop badgey-app || true
             docker rm badgey-app || true
 
             # Run the new container
-            docker run -d --restart=always --name badgey-app -v /opt/badgey/data/db.sqlite:/usr/src/app/db/db.sqlite -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/redwedgex/badgey:latest
+            docker run -d --restart=always --name badgey-app -v /opt/badgey/data/db.sqlite:/usr/src/app/db/db.sqlite -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/${{ github.repository_owner }}/$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]'):latest
 
           EOF
         env:
