@@ -56,7 +56,7 @@ MOD_ACTIONS_CHANNEL_ID = SYSLOG
 DB_PATH = "db/db.sqlite"
 
 restricted = "Cadet"
-staff = "Admin"
+staff = "Modmin"
 mods = "Mod"
 TIMEOUT_ROLE_NAME = "brig"
 
