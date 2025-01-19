@@ -44,12 +44,18 @@ jobs:
       - name: Deploy to Proxmox
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            # Stop and destroy any existing container
-            sudo pct stop ${{ secrets.VM_ID }} || true
-            sudo pct destroy ${{ secrets.VM_ID }} || true
+            # Unlock the container if it's locked
+            sudo pct unlock ${{ secrets.VM_ID }} || true
 
-            # Clone the template to create a new container (full clone)
-            sudo pct clone ${{ secrets.TEMPLATE_ID }} ${{ secrets.VM_ID }} --name badgey --full true
+            # Stop and destroy any existing container
+            sudo qm stop ${{ secrets.VM_ID }} || true
+            sudo qm destroy ${{ secrets.VM_ID }} || true
+
+            # Clone the template to create a new container
+            sudo pct clone ${{ secrets.TEMPLATE_ID }} ${{ secrets.VM_ID }} --full true
+
+            # Set the hostname (optional)
+            sudo pct set ${{ secrets.VM_ID }} --hostname badgey
 
             # Configure the network for the new container
             sudo pct set ${{ secrets.VM_ID }} --net0 name=eth0,bridge=vmbr1,ip=10.10.10.20/24,type=veth
