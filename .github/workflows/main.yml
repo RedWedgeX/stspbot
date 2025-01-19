@@ -47,7 +47,10 @@ jobs:
             # Install jq (for parsing API responses) if not already installed
             command -v jq >/dev/null 2>&1 || { sudo apt-get update && sudo apt-get install -y jq; }
 
+
+            echo Hostname: $HOSTNAME
             # Ensure that pve-qemu-kvm is installed
+            
             sudo apt-get install -y pve-qemu-kvm
 
             # Create a unique name for the new container based on the current timestamp
