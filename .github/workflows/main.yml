@@ -3,7 +3,7 @@ name: Build and Deploy Docker Image
 on:
   push:
     branches:
-      - master
+      - cicd-troubleshooting
 
 jobs:
   build-and-deploy:
@@ -13,27 +13,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v2
 
-      - name: Login to Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Login to Container Registry
+#        uses: docker/login-action@v2
+#        with:
+#          registry: ghcr.io
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set lowercase repo name
         id: set-repo-name
         run: echo "repo_name=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
+#      - name: Build and push Docker image
+#        uses: docker/build-push-action@v4
+#        with:
+#          context: .
+#          file: ./Dockerfile
+#          push: true
+#          tags: ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
 
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
@@ -44,12 +44,13 @@ jobs:
       - name: Deploy to Proxmox
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+
             # Stop and destroy any existing container
             sudo pct stop ${{ secrets.VM_ID }} || true
             sudo pct destroy ${{ secrets.VM_ID }} || true
 
             # Clone the template to create a new container (full clone)
-            sudo pct clone ${{ secrets.TEMPLATE_ID }} ${{ secrets.VM_ID }} --full true
+            sudo pct clone ${{ secrets.TEMPLATE_ID }} ${{ secrets.VM_ID }} --full true --name badgey
 
             # Set the hostname
             sudo pct set ${{ secrets.VM_ID }} --hostname badgey
@@ -77,7 +78,7 @@ jobs:
             sudo pct exec ${{ secrets.VM_ID }} docker rm badgey-app || true
 
             # Run the new Docker container in the Proxmox container, passing environment variables
-            sudo pct exec ${{ secrets.VM_ID }} -- bash -c "docker run -d --restart=always --name badgey-app -e GEMINI_API='${GEMINI_API}' -e TOKEN='${TOKEN}' ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest"
+            sudo pct exec ${{ secrets.VM_ID }} bash -c "docker run -d --restart=always --name badgey-app -e GEMINI_API='${GEMINI_API}' -e TOKEN='${TOKEN}' ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest"
 
           EOF
         env:
