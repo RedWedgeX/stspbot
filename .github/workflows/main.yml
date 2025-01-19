@@ -44,29 +44,46 @@ jobs:
       - name: Deploy to Proxmox
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-            # Stop and destroy any existing container
-            sudo qm stop ${{ secrets.VM_ID }} || true
-            sudo qm destroy ${{ secrets.VM_ID }} || true
+            # Install jq (for parsing API responses) if not already installed
+            command -v jq >/dev/null 2>&1 || { sudo apt-get update && sudo apt-get install -y jq; }
 
-            # Create a new container from template
-            sudo qm create ${{ secrets.VM_ID }} --clone ${{ secrets.TEMPLATE_ID }} --name badgey --net0 virtio,bridge=vmbr1,ip=10.10.10.20/24
-            sudo qm set ${{ secrets.VM_ID }} --description "Updated by GitHub Actions: \$(date)"
+            # Ensure that pve-qemu-kvm is installed
+            sudo apt-get install -y pve-qemu-kvm
 
-            # Bind mount the database file
-            sudo qm set ${{ secrets.VM_ID }} --hostpci0 /opt/badgey/data/db.sqlite,/usr/src/app/db/db.sqlite
+            # Create a unique name for the new container based on the current timestamp
+            NEW_CONTAINER_NAME="badgey-\$(date +%Y%m%d%H%M%S)"
 
-            # Set environment variables
-            sudo qm set ${{ secrets.VM_ID }} --env GEMINI_API=${GEMINI_API},TOKEN=${TOKEN}
+            # Clone the template to create a new container
+            qm clone ${{ secrets.TEMPLATE_ID }} ${{ secrets.VM_ID }} --name ${NEW_CONTAINER_NAME}
+
+            # Configure the network for the new container
+            qm set ${{ secrets.VM_ID }} --net0 virtio,bridge=vmbr1,ip=10.10.10.20/24
+
+            # Update the container's description
+            qm set ${{ secrets.VM_ID }} --description "Updated by GitHub Actions: \$(date)"
+
+            # Bind mount the database file into the container
+            qm set ${{ secrets.VM_ID }} --hostpci0 /opt/badgey/data/db.sqlite,/usr/src/app/db/db.sqlite
 
             # Start the container
-            sudo qm start ${{ secrets.VM_ID }}
+            qm start ${{ secrets.VM_ID }}
 
             # Wait for the container to be ready
             sleep 30
 
-            # Pull the latest image and run it in the container
-            sudo qm exec ${{ secrets.VM_ID }} docker pull ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
-            sudo qm exec ${{ secrets.VM_ID }} docker run -d --restart=always --name badgey-app ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
+            # Pull the latest image into the container
+            qm exec ${{ secrets.VM_ID }} docker pull ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
+
+            # Stop and remove any existing Docker container in the Proxmox container
+            qm exec ${{ secrets.VM_ID }} docker stop badgey-app || true
+            qm exec ${{ secrets.VM_ID }} docker rm badgey-app || true
+
+            # Run the new Docker container in the Proxmox container, passing environment variables
+            qm exec ${{ secrets.VM_ID }} docker run -d --restart=always --name badgey-app -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
+
+            # Clean up old containers based on the template, keep only the latest 5
+            qm list --full | grep ${{ secrets.TEMPLATE_ID }} | awk '{print $1}' | grep -v ${{ secrets.VM_ID }} | sort -r | tail -n +6 | xargs -I {} qm destroy {}
+
           EOF
         env:
           GEMINI_API: ${{ secrets.GEMINI_API }}
