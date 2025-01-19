@@ -44,12 +44,16 @@ jobs:
       - name: Deploy to Proxmox
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+
             # Stop and destroy any existing container
             sudo pct stop ${{ secrets.VM_ID }} || true
             sudo pct destroy ${{ secrets.VM_ID }} || true
 
             # Clone the template to create a new container (full clone)
-            sudo pct clone ${{ secrets.TEMPLATE_ID }} ${{ secrets.VM_ID }} --full true --name badgey
+            sudo pct clone ${{ secrets.TEMPLATE_ID }} ${{ secrets.VM_ID }} --full true
+
+            # Set the hostname
+            sudo pct set ${{ secrets.VM_ID }} --hostname badgey
 
             # Configure the network for the new container
             sudo pct set ${{ secrets.VM_ID }} --net0 name=eth0,bridge=vmbr1,ip=10.10.10.20/24,type=veth
@@ -57,7 +61,7 @@ jobs:
             # Update the container's description
             sudo pct set ${{ secrets.VM_ID }} --description "Updated by GitHub Actions: \$(date)"
 
-            # Bind mount the database file into the container
+            # Bind mount the database file into the container (Corrected)
             sudo pct set ${{ secrets.VM_ID }} --mp0 /opt/badgey/data/db.sqlite,mp=/usr/src/app/db/db.sqlite
 
             # Start the container
@@ -74,7 +78,7 @@ jobs:
             sudo pct exec ${{ secrets.VM_ID }} docker rm badgey-app || true
 
             # Run the new Docker container in the Proxmox container, passing environment variables
-            sudo pct exec ${{ secrets.VM_ID }} docker run -d --restart=always --name badgey-app -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
+            sudo pct exec ${{ secrets.VM_ID }} bash -c "docker run -d --restart=always --name badgey-app -e GEMINI_API='${GEMINI_API}' -e TOKEN='${TOKEN}' ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest"
 
           EOF
         env:
