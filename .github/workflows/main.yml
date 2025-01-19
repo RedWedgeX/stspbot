@@ -13,15 +13,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v2
 
-      - name: Login to Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Login to Container Registry
+#        uses: docker/login-action@v2
+#        with:
+#          registry: ghcr.io
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set lowercase repo name
         id: set-repo-name
@@ -49,7 +49,7 @@ jobs:
             sudo pct destroy ${{ secrets.VM_ID }} || true
 
             # Clone the template to create a new container (full clone)
-            sudo pct clone ${{ secrets.TEMPLATE_ID }} ${{ secrets.VM_ID }} --name badgey
+            sudo pct clone ${{ secrets.TEMPLATE_ID }} ${{ secrets.VM_ID }} --full true --name badgey
 
             # Configure the network for the new container
             sudo pct set ${{ secrets.VM_ID }} --net0 name=eth0,bridge=vmbr1,ip=10.10.10.20/24,type=veth
@@ -57,7 +57,7 @@ jobs:
             # Update the container's description
             sudo pct set ${{ secrets.VM_ID }} --description "Updated by GitHub Actions: \$(date)"
 
-            # Bind mount the database file into the container (Corrected)
+            # Bind mount the database file into the container
             sudo pct set ${{ secrets.VM_ID }} --mp0 /opt/badgey/data/db.sqlite,mp=/usr/src/app/db/db.sqlite
 
             # Start the container
@@ -66,18 +66,15 @@ jobs:
             # Wait for the container to be ready
             sleep 30
 
-            # SSH into the container to manage the Docker container
-            ssh -o StrictHostKeyChecking=no root@10.10.10.20 << 'INNER_EOF'
-              # Pull the latest image
-              docker pull ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
+            # Pull the latest image into the container
+            sudo pct exec ${{ secrets.VM_ID }} docker pull ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
 
-              # Stop and remove any existing Docker container
-              docker stop badgey-app || true
-              docker rm badgey-app || true
+            # Stop and remove any existing Docker container in the Proxmox container
+            sudo pct exec ${{ secrets.VM_ID }} docker stop badgey-app || true
+            sudo pct exec ${{ secrets.VM_ID }} docker rm badgey-app || true
 
-              # Run the new Docker container, passing environment variables
-              docker run -d --restart=always --name badgey-app -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
-            INNER_EOF
+            # Run the new Docker container in the Proxmox container, passing environment variables
+            sudo pct exec ${{ secrets.VM_ID }} docker run -d --restart=always --name badgey-app -e GEMINI_API=${GEMINI_API} -e TOKEN=${TOKEN} ghcr.io/${{ steps.set-repo-name.outputs.repo_name }}:latest
 
           EOF
         env:
