@@ -312,6 +312,9 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
     @commands.command(name='miss')
     @commands.has_any_role(staff, mods)
     async def whodidimiss(self, ctx):
+        """
+        - Check for missed welcomes in the welcome channel
+        """
         async with ctx.typing():
             message = await ctx.send("Working, please stand by.")
             missed_posts = {}
