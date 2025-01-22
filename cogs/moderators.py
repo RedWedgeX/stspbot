@@ -309,7 +309,7 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
             pass
 
     # WHODIDIMISS
-    @commands.command(name='whodidimiss', aliases=['miss'])
+    @commands.command(name='miss')
     @commands.has_any_role(staff, mods)
     async def whodidimiss(self, ctx):
         async with ctx.typing():
