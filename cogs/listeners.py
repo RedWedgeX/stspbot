@@ -280,7 +280,8 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
         except commands.errors.CommandInvokeError as e:
             print(f"Invoke Error {e}")
 
-    @commands.command()
+
+    @commands.command(hidden=True)
     async def gemini(self, ctx, author, *prompt: str):
 
                 user_id = author.id

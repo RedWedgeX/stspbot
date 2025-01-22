@@ -76,7 +76,7 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
     @commands.command()
     @commands.has_any_role(staff, mods)
     async def ban(self, ctx, user: discord.Member, *why: str):
-        """ - BAN a recruit """
+        """ - BAN a member with the welcome role """
         new_member = discord.utils.get(ctx.guild.roles, name=restricted)
         if not why:
             why = "No reason given"
@@ -102,7 +102,7 @@ class Moderators(commands.Cog, name="Moderator and Administrator Commands"):
     @commands.command()
     @commands.has_any_role(staff, mods)
     async def w(self, ctx, user: discord.Member = None):
-        """ - Welcomes a user to the server and removes recruit role"""
+        """ - Welcomes a user to the server and removes welcome channel role"""
         wchan = self.bot.get_channel(WELCOMECHAN)
         if ctx.channel == wchan:
             if not user:

@@ -43,12 +43,13 @@ class Extras(commands.Cog, name="Stuff for funzies"):
         else:
             await ctx.send
 
-    @commands.command()
+
+    @commands.command(hidden=True)
     async def gg(self, ctx):
         history = await load_chat_history_for_user(ctx.author.id)
         print(history)
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def gemni(self, ctx, *prompt: str):
         async with ctx.message.channel.typing():
 
