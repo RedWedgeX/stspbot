@@ -79,6 +79,9 @@ SELF_ASSIGN_ROLES = {"horgahn":
                      "masterchief":
                          {"rolename": "Halo Player",
                           "description": "I play Halo and want to be pinged for group events!"},
+                     "pluto":
+                            {"rolename": "Pluto",
+                            "description": "I want to be pinged to watch Pluto TV with the gronp!"},
                      "any":
                           {"rolename": "Any pronouns",
                            "description": "I use any pronouns"},
