@@ -58,7 +58,7 @@ class SysAdmin(commands.Cog, name="Bot admin commands"):
     async def error(self, ctx):
         raise ValueError('An error has been manually triggered for testing purposes.')
 
-    @commands.command(name='roles')
+    @commands.command(name='roles', hidden=True)
     @commands.has_any_role(staff)
     async def reset_role_message(self, ctx):
         # Set up the reaction channel
