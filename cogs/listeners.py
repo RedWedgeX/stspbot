@@ -313,13 +313,13 @@ class Listeners(commands.Cog, name="Shazbot Responders & Listeners"):
                 try:
                     response = chat.send_message(prompt)
                     await add_chat_history(user_id, "model", response.text)
-                    # chat.history.append({"role": "model", "parts": response.text})
 
-                    # Split response into chunks of 2000 characters or less
                     response_text = response.text
                     return response.text
                 except Exception as e:
-                    return (f'```py\n{traceback.format_exc()}\n```')
+                    syslog = self.bot.get_channel(SYSLOG)
+                    await syslog.send(f"**BADGEY ERROR**\n```{e}```")
+                    return (f"An error has occurred.\nhttps://tenor.com/bJlBU.gif")
 
 async def add_chat_history(user_id, role, parts):
     async with aiosqlite.connect(DB_PATH) as db:
